@@ -1,0 +1,6 @@
+.env
+.vimsession
+
+# Mainbot
+CoffeeBreak/obj/**
+CoffeeBreak/bin/**
