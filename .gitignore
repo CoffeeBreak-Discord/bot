@@ -1,5 +1,6 @@
 .env
 .vimsession
+.vs
 
 # Mainbot
 CoffeeBreak/obj/**

@@ -1,10 +1,29 @@
-﻿namespace CoffeeBreak
+﻿using Discord;
+using Discord.WebSocket;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CoffeeBreak
 {
-    class Program
+    public partial class Program
     {
-        static void Main(string[] args)
+        private readonly DiscordSocketConfig _config;
+
+        static void Main() => new Program().Run().GetAwaiter().GetResult();
+
+        public Program()
         {
-            Console.WriteLine("Hello world");
+            this._config = new DiscordSocketConfig { TotalShards = Global.Constant.TotalShards };
+        }
+
+        public async Task Run()
+        {
+            using var services = ConfigureServices();
+            var client = services.GetRequiredService<DiscordShardedClient>();
+
+            await client.LoginAsync(TokenType.Bot, Global.Constant.DiscordToken);
+            await client.StartAsync();
+
+            await Task.Delay(-1);
         }
     }
 }
