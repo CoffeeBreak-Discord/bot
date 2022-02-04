@@ -17,7 +17,7 @@ RUN dotnet restore -r ${DOTNET_RUNTIME_TARGET}
 COPY . .
 
 # Build .NET Project
-RUN dotnet build -c ${DOTNET_CONFIGURATION} -r ${DOTNET_RUNTIME_TARGET} --no-restore --self-contained true -o output
+RUN dotnet build -c ${DOTNET_CONFIGURATION} -r ${DOTNET_RUNTIME_TARGET} --self-contained true -o output
 
 # Prepare for Production
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0-alpine
