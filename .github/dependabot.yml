@@ -9,4 +9,4 @@ updates:
     directory: "/CoffeeBreak" # Location of package manifests
     schedule:
       interval: "daily"
-      timeZone: Asia/Jakarta
+      timezone: Asia/Jakarta
