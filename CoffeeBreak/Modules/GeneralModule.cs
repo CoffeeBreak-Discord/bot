@@ -1,19 +1,17 @@
 ﻿using Discord.Interactions;
 
-namespace CoffeeBreak.Modules
+namespace CoffeeBreak.Modules;
+public class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
 {
-    public class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
+    [SlashCommand("ping", "Ping!")]
+    public async Task Ping()
     {
-        [SlashCommand("ping", "Ping!")]
-        public async Task Ping()
-        {
-            await this.RespondAsync("Pong!");
-        }
+        await this.RespondAsync("Pong!");
+    }
 
-        [SlashCommand("respond", "Talk as bot")]
-        public async Task Respond(string message)
-        {
-            await this.RespondAsync(message);
-        }
+    [SlashCommand("respond", "Talk as bot")]
+    public async Task Respond(string message)
+    {
+        await this.RespondAsync($"You said: {message}");
     }
 }
