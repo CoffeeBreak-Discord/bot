@@ -3,5 +3,5 @@
 .vs
 
 # Mainbot
-CoffeeBreak/obj/**
-CoffeeBreak/bin/**
+**/obj/**
+**/bin/**
