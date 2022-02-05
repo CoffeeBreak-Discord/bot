@@ -2,6 +2,6 @@
 .vimsession
 .vs
 
-# Mainbot
+# Generated project files by .NET
 **/obj/**
 **/bin/**

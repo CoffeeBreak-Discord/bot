@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using CoffeeBreak.ThirdParty;
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 
@@ -14,19 +15,24 @@ public class LoggingService
 
     private Task ComponentCommandExecuted(ComponentCommandInfo compInfo, IInteractionContext ctx, IResult result)
     {
-        Console.WriteLine($"{ctx.User.Id} executing {compInfo.Name}");
+        Logging.Info($"{ctx.User.Id}[{ctx.Guild.Id}] executing {compInfo.Name}", "Command");
         return Task.CompletedTask;
     }
 
     private Task ClientLog(LogMessage msg)
     {
-        Console.WriteLine(msg);
+        switch (msg.Severity)
+        {
+            case LogSeverity.Info: Logging.Info(msg.Message, msg.Source); break;
+            case LogSeverity.Warning: Logging.Warning(msg.Message, msg.Source); break;
+            case LogSeverity.Error: Logging.Error(msg.Message, msg.Source); break;
+        }
         return Task.CompletedTask;
     }
 
     private Task SlashCommandExecuted(SlashCommandInfo cmdInfo, IInteractionContext ctx, IResult result)
     {
-        Console.WriteLine($"{ctx.User.Id} executing /{cmdInfo.Name}");
+        Logging.Info($"{ctx.User.Id}[{ctx.Guild.Id}] executing /{cmdInfo.Name}", "SlashCommand");
         return Task.CompletedTask;
     }
 }
