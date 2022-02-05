@@ -12,6 +12,6 @@ public class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
     [SlashCommand("respond", "Talk as bot")]
     public async Task Respond(string message)
     {
-        await this.RespondAsync($"You said: {message}");
+        await this.RespondAsync($"<@!{this.Context.User.Id}> said: {message}");
     }
 }

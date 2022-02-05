@@ -5,3 +5,7 @@
 # Mainbot
 CoffeeBreak/obj/**
 CoffeeBreak/bin/**
+
+# ThirdParty
+CoffeeBreak.ThirdParty/obj/**
+CoffeeBreak.ThirdParty/bin/**
