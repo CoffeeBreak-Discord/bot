@@ -3,3 +3,10 @@
 **/bin/**
 
 Dockerfile
+.git
+.github
+.vscode
+.env.example
+.gitattributes
+.gitignore
+README.md
