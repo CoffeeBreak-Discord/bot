@@ -4,5 +4,5 @@ Lorem ipsum dolor sit amet.
 ## Command penting
 Export .env to Shell
 ```
-export $(cut -d= -f1 ./.env)
+source .env && export $(cut -d= -f1 ./.env)
 ```
