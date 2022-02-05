@@ -2,10 +2,6 @@
 .vimsession
 .vs
 
-# Mainbot
-CoffeeBreak/obj/**
-CoffeeBreak/bin/**
-
-# ThirdParty
-CoffeeBreak.ThirdParty/obj/**
-CoffeeBreak.ThirdParty/bin/**
+# Generated project files by .NET
+**/obj/**
+**/bin/**
