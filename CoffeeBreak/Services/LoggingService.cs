@@ -23,9 +23,15 @@ public class LoggingService
     {
         switch (msg.Severity)
         {
-            case LogSeverity.Info: Logging.Info(msg.Message, msg.Source); break;
-            case LogSeverity.Warning: Logging.Warning(msg.Message, msg.Source); break;
-            case LogSeverity.Error: Logging.Error(msg.Message, msg.Source); break;
+            case LogSeverity.Info:
+                Logging.Info(msg.Message, msg.Source);
+                break;
+            case LogSeverity.Warning:
+                Logging.Warning($"{msg.Message ?? msg.Exception.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
+                break;
+            case LogSeverity.Error:
+                Logging.Error($"{msg.Message ?? msg.Exception.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
+                break;
         }
         return Task.CompletedTask;
     }
