@@ -5,3 +5,4 @@
 # Generated project files by .NET
 **/obj/**
 **/bin/**
+**/Properties/**
