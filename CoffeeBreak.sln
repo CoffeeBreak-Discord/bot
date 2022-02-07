@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.ThirdParty", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.Database.Migrator", "CoffeeBreak.Database.Migrator\CoffeeBreak.Database.Migrator.csproj", "{097B1434-CFAF-4FF9-BCAB-879F64362DBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.Database.Models", "CoffeeBreak.Database.Models\CoffeeBreak.Database.Models.csproj", "{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,5 +60,17 @@ Global
 		{097B1434-CFAF-4FF9-BCAB-879F64362DBE}.Release|x64.Build.0 = Release|Any CPU
 		{097B1434-CFAF-4FF9-BCAB-879F64362DBE}.Release|x86.ActiveCfg = Release|Any CPU
 		{097B1434-CFAF-4FF9-BCAB-879F64362DBE}.Release|x86.Build.0 = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|x64.Build.0 = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Debug|x86.Build.0 = Debug|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|x64.ActiveCfg = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|x64.Build.0 = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|x86.ActiveCfg = Release|Any CPU
+		{95B2BFBF-D1E3-4C4F-8ED2-6A64BD433528}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
