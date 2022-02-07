@@ -1,20 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak", "CoffeeBreak\CoffeeBreak.csproj", "{48294E35-081F-48F7-A97B-6DD2F451F3B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak", "CoffeeBreak\CoffeeBreak.csproj", "{48294E35-081F-48F7-A97B-6DD2F451F3B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.ThirdParty", "CoffeeBreak.ThirdParty\CoffeeBreak.ThirdParty.csproj", "{EF79843D-5275-4A04-951B-A3CA9FFC6098}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.ThirdParty", "CoffeeBreak.ThirdParty\CoffeeBreak.ThirdParty.csproj", "{EF79843D-5275-4A04-951B-A3CA9FFC6098}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.Migrator", "CoffeeBreak.Migrator\CoffeeBreak.Migrator.csproj", "{4B207E7E-B720-434D-B989-7ECB73AFC6AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Migrator", "CoffeeBreak.Migrator\CoffeeBreak.Migrator.csproj", "{4B207E7E-B720-434D-B989-7ECB73AFC6AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EF79843D-5275-4A04-951B-A3CA9FFC6098} = {EF79843D-5275-4A04-951B-A3CA9FFC6098}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoffeeBreak.Models", "CoffeeBreak.Models\CoffeeBreak.Models.csproj", "{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Models", "CoffeeBreak.Models\CoffeeBreak.Models.csproj", "{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}"
 EndProject
 Global
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -72,5 +72,11 @@ Global
 		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x64.Build.0 = Release|Any CPU
 		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B68A72AD-9769-4E7E-98EB-6E94B536BC25}
 	EndGlobalSection
 EndGlobal
