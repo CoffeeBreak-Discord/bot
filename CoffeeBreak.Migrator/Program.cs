@@ -1,4 +1,5 @@
 ﻿using CoffeeBreak.Migrator.MigrationList;
+using CoffeeBreak.ThirdParty;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,20 +23,11 @@ class Program
     {
         return new ServiceCollection()
             .AddFluentMigratorCore()
-            .ConfigureRunner(rb => rb.AddMySql5().WithGlobalConnectionString(GenerateConnectionString())
+            .ConfigureRunner(rb => rb.AddMySql5().WithGlobalConnectionString(Database.GenerateConnectionString())
                     // Add migration list here
                     .ScanIn(typeof(_20220207_ClassicModeration).Assembly).For.Migrations()
                 )
             .AddLogging(lb => lb.AddFluentMigratorConsole())
             .BuildServiceProvider(false);
-    }
-
-    private static string GenerateConnectionString()
-    {
-        string server = Environment.GetEnvironmentVariable("MARIADB_HOST") ?? "localhost";
-        string database = Environment.GetEnvironmentVariable("MARIADB_DATABASE") ?? "coffeebreak";
-        string username = Environment.GetEnvironmentVariable("MARIADB_USERNAME") ?? "root";
-        string password = Environment.GetEnvironmentVariable("MARIADB_PASSWORD") ?? "";
-        return $"server={server};database={database};user={username};password={password}";
     }
 }
