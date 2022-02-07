@@ -1,6 +1,6 @@
 ﻿using FluentMigrator;
 
-namespace CoffeeBreak.Database.Migrator.MigrationList;
+namespace CoffeeBreak.Migrator.MigrationList;
 [Migration(20220207)]
 public class _20220207_ClassicModeration : Migration
 {

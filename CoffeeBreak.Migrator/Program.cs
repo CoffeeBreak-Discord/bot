@@ -1,8 +1,8 @@
-﻿using CoffeeBreak.Database.Migrator.MigrationList;
+﻿using CoffeeBreak.Migrator.MigrationList;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoffeeBreak.Database.Migrator;
+namespace CoffeeBreak.Migrator;
 class Program
 {
     static void Main(string[] args)
