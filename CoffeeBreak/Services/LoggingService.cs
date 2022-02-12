@@ -27,7 +27,7 @@ public class LoggingService
                 Logging.Info(msg.Message, msg.Source);
                 break;
             case LogSeverity.Warning:
-                Logging.Warning($"{msg.Message ?? msg.Exception.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
+                Logging.Warning($"{msg.Exception.Message ?? msg.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
                 break;
             case LogSeverity.Error:
                 Logging.Error($"{msg.Message ?? msg.Exception.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
