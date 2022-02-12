@@ -18,7 +18,10 @@ public partial class Program
 
             // Interaction & Commands
             .AddSingleton<InteractionService>()
-            .AddSingleton<CommandHandlerService>();
+            .AddSingleton<CommandHandlerService>()
+
+            // Game Activity
+            .AddSingleton<GameActivityService>();
     }
 
     private async void SetExtraStep(ServiceProvider build)
