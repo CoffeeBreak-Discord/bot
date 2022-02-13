@@ -10,3 +10,6 @@ Dockerfile
 .gitattributes
 .gitignore
 README.md
+
+# Development Generated Data
+./devel-data

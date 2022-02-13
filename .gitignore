@@ -6,3 +6,6 @@
 **/obj/**
 **/bin/**
 **/Properties/**
+
+# Development Generated Data
+.devel-data/
