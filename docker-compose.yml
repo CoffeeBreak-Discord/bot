@@ -4,7 +4,6 @@ networks:
       driver: default
       config:
         - subnet: "172.22.0.0/16"
-    external: false
   private:
     ipam:
       driver: default
