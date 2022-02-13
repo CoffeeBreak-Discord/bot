@@ -1,0 +1,31 @@
+networks:
+  internet:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.22.0.0/16"
+  private:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.20.0.0/16"
+    internal: true
+services:
+  mariadb:
+    image: mariadb:latest
+    env_file:
+      - .mariadb.env
+    networks:
+      private:
+        ipv4_address: 172.20.0.2
+        aliases:
+          - mariadb.private
+      internet:
+        aliases:
+          - mariadb.internet
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    volumes:
+      - "./.devel-data/mariadb/data:/var/lib/mysql"
+version: "3"
