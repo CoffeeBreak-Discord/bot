@@ -19,7 +19,7 @@ public class GameActivityService
     {
         _client.SetGameAsync(this.SetText());
         Logging.Info("Game activity is started", "GameActivity");
-        Asynchronous.SetInterval(() => _client.SetGameAsync(this.SetText()), TimeSpan.FromSeconds(_interval));
+        Interval.SetInterval(() => _client.SetGameAsync(this.SetText()), 10000);
         return Task.CompletedTask;
     }
 
