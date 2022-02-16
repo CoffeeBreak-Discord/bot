@@ -8,9 +8,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.ThirdParty", "CoffeeBreak.ThirdParty\CoffeeBreak.ThirdParty.csproj", "{EF79843D-5275-4A04-951B-A3CA9FFC6098}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Migrator", "CoffeeBreak.Migrator\CoffeeBreak.Migrator.csproj", "{4B207E7E-B720-434D-B989-7ECB73AFC6AC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EF79843D-5275-4A04-951B-A3CA9FFC6098} = {EF79843D-5275-4A04-951B-A3CA9FFC6098}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Models", "CoffeeBreak.Models\CoffeeBreak.Models.csproj", "{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}"
 EndProject
