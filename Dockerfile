@@ -24,8 +24,8 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
 # Set WORKDIR
 WORKDIR /app
 
-ARG VERSION=Unknown
-ARG COMMIT=
+ARG VERSION=nightly
+ARG COMMIT=Unknown
 ENV VERSION=${VERSION} \
     COMMIT=${COMMIT}
 

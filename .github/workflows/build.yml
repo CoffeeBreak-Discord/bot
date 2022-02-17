@@ -34,9 +34,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract version
-        id: version
-        run: if [ "${{ github.event_name }}" = "release" ]; then echo ::set-output name=name::${GITHUB_REF##*/}; else echo ::set-output name=name::nightly; fi
+      - name: Extract tag name
+        id: tags
+        if: ${{ github.event_name == 'release' }}
+        run: echo ::set-output name=name::${GITHUB_REF##*/}
 
       - name: Extract flavor
         id: flavor
@@ -51,14 +52,15 @@ jobs:
             suffix=${{ steps.flavor.outputs.name }}
           images: ghcr.io/CoffeeBreak-Discord/bot
           tags: |
-            ${{ steps.version.outputs.name }}
+            ${{ steps.tags.outputs.name }}
+            latest
 
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2.8.0
         with:
           context: ./
-          tags: ${{ steps.img_meta.outputs.version }}
+          tags: ${{ steps.img_meta.outputs.tags }}
           labels: ${{ steps.img_meta.outputs.labels }}
           push: ${{ github.event_name != 'pull_request' }}
           build-args: |
