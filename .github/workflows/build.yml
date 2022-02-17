@@ -36,7 +36,6 @@ jobs:
 
       - name: Extract tag name
         id: tags
-        if: ${{ github.event_name == 'release' }}
         run: echo ::set-output name=name::${GITHUB_REF##*/:-nightly}
 
       - name: Extract flavor
