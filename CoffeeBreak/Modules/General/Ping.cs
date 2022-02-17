@@ -1,5 +1,5 @@
-using Discord.Interactions;
 using Discord;
+using Discord.Interactions;
 
 namespace CoffeeBreak.Modules;
 public partial class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
