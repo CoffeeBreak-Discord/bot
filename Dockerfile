@@ -25,7 +25,9 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
 WORKDIR /app
 
 ARG VERSION=Unknown
-ARG COMMIT=Unknown
+ARG COMMIT=
+ENV VERSION=${VERSION} \
+    COMMIT=${COMMIT}
 
 # Copy the built app from build stage
 COPY --from=build-stage /tmp/build-output .
