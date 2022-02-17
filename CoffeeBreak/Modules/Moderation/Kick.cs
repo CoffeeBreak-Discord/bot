@@ -33,6 +33,9 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
             return;
         }
 
+        var botRole = this.Context.Guild.GetUser(_client.CurrentUser.Id) .Roles.OrderByDescending(x => x.Position);
+        var botPosition = botRole.Count() > 0 ? botRole.ToArray()[0].Position : -1;
+
         await this.RespondAsync($"You'll kick {guildUser}");
     }
 }
