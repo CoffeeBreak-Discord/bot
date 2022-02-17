@@ -8,7 +8,7 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
     public async Task Kick([Summary(description: "The person who want to kicked")] IUser user)
     {
         // Check if command is executed in guild
-        if (this.Context.Guild.Equals(null))
+        if (this.Context.Guild == null)
         {
             await this.RespondAsync("You can only using this module in Guild/Server");
             return;
