@@ -24,6 +24,9 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
 # Set WORKDIR
 WORKDIR /app
 
+ARG VERSION=Unknown
+ARG COMMIT=Unknown
+
 # Copy the built app from build stage
 COPY --from=build-stage /tmp/build-output .
 
