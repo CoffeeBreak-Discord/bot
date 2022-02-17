@@ -52,7 +52,6 @@ jobs:
           images: ghcr.io/CoffeeBreak-Discord/bot
           tags: |
             ${{ steps.version.outputs.name }}
-            latest
 
       - name: Build and push
         id: docker_build
