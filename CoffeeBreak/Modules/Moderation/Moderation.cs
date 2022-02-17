@@ -12,7 +12,7 @@ public partial class ModerationModule
 
     private SocketRole GetHighestRole(SocketGuildUser user)
     {
-        return user.Roles.OrderByDescending(x => x.Position) .ToArray()[0];
+        return user.Roles.OrderByDescending(x => x.Position).ToArray()[0];
     }
 
     private bool IsExecutable(SocketGuildUser userContext, SocketGuildUser userTarget)
