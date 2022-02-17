@@ -30,7 +30,7 @@ public class LoggingService
                 Logging.Warning($"{msg.Exception.Message ?? msg.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
                 break;
             case LogSeverity.Error:
-                Logging.Error($"{msg.Message ?? msg.Exception.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
+                Logging.Error($"{msg.Exception.Message ?? msg.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
                 break;
         }
         return Task.CompletedTask;
