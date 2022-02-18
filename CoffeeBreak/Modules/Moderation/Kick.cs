@@ -1,3 +1,4 @@
+using CoffeeBreak.ThirdParty.Discord;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -5,10 +6,12 @@ using Discord.WebSocket;
 namespace CoffeeBreak.Modules;
 public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
 {
+    [RequireBotPermission(GuildPermission.KickMembers)]
+    [RequireUserPermission(GuildPermission.KickMembers)]
     [SlashCommand("kick", "Kick user")]
     public async Task Kick(
         [Summary(description: "Person who want to kicked")] IUser user,
-        [Summary(description: "Reason why be kicked")] string reason)
+        [Summary(description: "Reason why be kicked")] string reason = "No reason")
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
         SocketGuildUser ctxUser = this.Context.Guild.GetUser(this.Context.User.Id);
@@ -41,12 +44,12 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         }
         if (this.Context.Guild.OwnerId != ctxUser.Id)
         {
-            if (!this.IsExecutable(ctxUser, guildUser))
+            if (!RoleManager.IsKickable(ctxUser, guildUser))
             {
                 await this.RespondAsync("You cannot kick user that higher or same than you.");
                 return;
             }
-            if (!this.IsExecutable(clientUser, guildUser))
+            if (!RoleManager.IsKickable(clientUser, guildUser))
             {
                 await this.RespondAsync("You cannot kick user that higher from this bot.");
                 return;
@@ -54,6 +57,6 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         }
 
         await guildUser.KickAsync(reason);
-        await this.RespondAsync($"{guildUser} successfully kicked with reason:\n```{reason}```");
+        await this.RespondAsync($"{guildUser} successfully kicked with reason:\n```{reason ?? "No reason"}```");
     }
 }
