@@ -1,3 +1,4 @@
+using CoffeeBreak.Services;
 using CoffeeBreak.ThirdParty.Discord;
 using Discord.WebSocket;
 
@@ -5,10 +6,12 @@ namespace CoffeeBreak.Modules;
 public partial class ModerationModule
 {
     private DiscordShardedClient _client;
+    private DatabaseService _db;
 
-    public ModerationModule(DiscordShardedClient client)
+    public ModerationModule(DiscordShardedClient client, DatabaseService db)
     {
         _client = client;
+        _db = db;
     }
 
     private class DeclinedPermissionContext
