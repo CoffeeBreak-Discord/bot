@@ -1,5 +1,3 @@
-using Discord;
-using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.ThirdParty.Discord;
@@ -11,7 +9,7 @@ public class RoleManager
     ///<param name="user">Target user</param>
     public static SocketRole GetHighestRole(SocketGuildUser user)
     {
-        return user.Roles.OrderByDescending(x => x.Position).ToArray()[0];
+        return user.Roles.OrderByDescending(x => x.Position).First();
     }
 
     private static bool IsExecutable(SocketGuildUser userContext, SocketGuildUser userTarget)
@@ -27,6 +25,6 @@ public class RoleManager
     public static SocketRole? HasRole(SocketGuildUser user, string roleName = "", ulong roleID = 0)
     {
         var search = roleID != 0 ? user.Roles.Where(x => x.Id == roleID) : user.Roles.Where(x => x.Name == roleName);
-        return search.Count() > 0 ? search.ToArray()[0] : null;
+        return search.Count() > 0 ? search.First() : null;
     }
 }

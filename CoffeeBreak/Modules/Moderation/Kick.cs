@@ -1,4 +1,3 @@
-using CoffeeBreak.ThirdParty.Discord;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -14,8 +13,6 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         [Summary(description: "Reason why be kicked")] string reason = "No reason")
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
-        SocketGuildUser ctxUser = this.Context.Guild.GetUser(this.Context.User.Id);
-        SocketGuildUser clientUser = this.Context.Guild.GetUser(_client.CurrentUser.Id);
 
         // Check if command is executed in guild
         if (this.Context.Guild == null)
@@ -32,28 +29,13 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         }
 
         // Check if user is urself, owner, or have role higher than executor/bot.
-        if (this.Context.User.Id == user.Id)
+        var checkPerm = this.CheckModerationPermission(guildUser,
+            new FilterPermission[]
+            { FilterPermission.Himself, FilterPermission.Owner, FilterPermission.HigherRole, FilterPermission.HigherRoleBot });
+        if (checkPerm.IsError)
         {
-            await this.RespondAsync("You cannot kick yourself.");
+            await this.RespondAsync(checkPerm.Message);
             return;
-        }
-        if (this.Context.Guild.OwnerId == guildUser.Id)
-        {
-            await this.RespondAsync("You cannot kick an owner.");
-            return;
-        }
-        if (this.Context.Guild.OwnerId != ctxUser.Id)
-        {
-            if (!RoleManager.IsKickable(ctxUser, guildUser))
-            {
-                await this.RespondAsync("You cannot kick user that higher or same than you.");
-                return;
-            }
-            if (!RoleManager.IsKickable(clientUser, guildUser))
-            {
-                await this.RespondAsync("You cannot kick user that higher from this bot.");
-                return;
-            }
         }
 
         await guildUser.KickAsync(reason);
