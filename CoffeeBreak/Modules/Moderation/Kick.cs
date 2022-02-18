@@ -6,7 +6,9 @@ namespace CoffeeBreak.Modules;
 public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
 {
     [SlashCommand("kick", "Kick user")]
-    public async Task Kick([Summary(description: "The person who want to kicked")] IUser user)
+    public async Task Kick(
+        [Summary(description: "Person who want to kicked")] IUser user,
+        [Summary(description: "Reason why be kicked")] string reason)
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
         SocketGuildUser ctxUser = this.Context.Guild.GetUser(this.Context.User.Id);
@@ -26,7 +28,7 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
             return;
         }
 
-        // Check if user is urself, owner, admin, or have role higher than executor/bot.
+        // Check if user is urself, owner, or have role higher than executor/bot.
         if (this.Context.User.Id == user.Id)
         {
             await this.RespondAsync("You cannot kick yourself.");
@@ -37,22 +39,21 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
             await this.RespondAsync("You cannot kick an owner.");
             return;
         }
-        if (guildUser.Roles.Where(x => x.Permissions.Has(GuildPermission.Administrator)).Count() > 0)
+        if (this.Context.Guild.OwnerId != ctxUser.Id)
         {
-            await this.RespondAsync("You cannot kick an admin.");
-            return;
-        }
-        if (!this.IsExecutable(ctxUser, guildUser))
-        {
-            await this.RespondAsync("You cannot kick user that higher than you.");
-            return;
-        }
-        if (!this.IsExecutable(ctxUser, clientUser))
-        {
-            await this.RespondAsync("You cannot kick user that higher from this bot.");
-            return;
+            if (!this.IsExecutable(ctxUser, guildUser))
+            {
+                await this.RespondAsync("You cannot kick user that higher or same than you.");
+                return;
+            }
+            if (!this.IsExecutable(clientUser, guildUser))
+            {
+                await this.RespondAsync("You cannot kick user that higher from this bot.");
+                return;
+            }
         }
 
-        await this.RespondAsync($"You'll kick {guildUser}");
+        await guildUser.KickAsync(reason);
+        await this.RespondAsync($"{guildUser} successfully kicked with reason:\n```{reason}```");
     }
 }
