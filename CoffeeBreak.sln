@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.ThirdParty", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Migrator", "CoffeeBreak.Migrator\CoffeeBreak.Migrator.csproj", "{4B207E7E-B720-434D-B989-7ECB73AFC6AC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeBreak.Models", "CoffeeBreak.Models\CoffeeBreak.Models.csproj", "{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,18 +55,6 @@ Global
 		{4B207E7E-B720-434D-B989-7ECB73AFC6AC}.Release|x64.Build.0 = Release|Any CPU
 		{4B207E7E-B720-434D-B989-7ECB73AFC6AC}.Release|x86.ActiveCfg = Release|Any CPU
 		{4B207E7E-B720-434D-B989-7ECB73AFC6AC}.Release|x86.Build.0 = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|x64.Build.0 = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Debug|x86.Build.0 = Debug|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x64.ActiveCfg = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x64.Build.0 = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x86.ActiveCfg = Release|Any CPU
-		{3EE627D3-0661-4A1C-8622-CFF5EE2E2C76}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
