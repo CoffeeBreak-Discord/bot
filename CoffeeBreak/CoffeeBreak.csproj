@@ -36,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CoffeeBreak.Models\CoffeeBreak.Models.csproj" />
     <ProjectReference Include="..\CoffeeBreak.ThirdParty\CoffeeBreak.ThirdParty.csproj" />
   </ItemGroup>
 
