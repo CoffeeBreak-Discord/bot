@@ -1,5 +1,4 @@
-﻿namespace CoffeeBreak.Services;
-public class DatabaseService
-{
-    public DatabaseService() { }
-}
+﻿using CoffeeBreak.Models;
+
+namespace CoffeeBreak.Services;
+public class DatabaseService : Context { }
