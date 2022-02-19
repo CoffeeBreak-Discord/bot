@@ -1,9 +1,10 @@
 using CoffeeBreak.Services;
 using CoffeeBreak.ThirdParty.Discord;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.Modules;
-public partial class ModerationModule
+public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
 {
     private DiscordShardedClient _client;
     private DatabaseService _db;

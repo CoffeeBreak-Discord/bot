@@ -4,7 +4,7 @@ using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Modules;
-public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
+public partial class ModerationModule
 {
     [SlashCommand("warnlist", "Get warn list from specified user")]
     public async Task Warnlist(IUser user)

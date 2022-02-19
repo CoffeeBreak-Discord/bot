@@ -3,7 +3,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.Modules;
-public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
+public partial class ModerationModule
 {
     [RequireBotPermission(GuildPermission.KickMembers)]
     [RequireUserPermission(GuildPermission.KickMembers)]
