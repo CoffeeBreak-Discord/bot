@@ -23,7 +23,7 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
 
     private enum FilterPermission
     {
-        Himself, Owner, HigherRole, HigherRoleBot
+        Himself, Owner, HigherRole, HigherRoleBot, Bot
     }
 
     private DeclinedPermissionContext CheckModerationPermission(SocketGuildUser guildUser, FilterPermission[] filters)
@@ -42,6 +42,11 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         if (getFilter(FilterPermission.Himself) && this.Context.User.Id == guildUser.Id)
         {
             ctx.Message += "yourself.";
+            return ctx;
+        }
+        if (getFilter(FilterPermission.Bot) && clientUser.Id == guildUser.Id)
+        {
+            ctx.Message += "bot.";
             return ctx;
         }
         if (getFilter(FilterPermission.Owner) && this.Context.Guild.OwnerId == guildUser.Id)
