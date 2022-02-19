@@ -27,5 +27,6 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
 
         // Get data from database
         var data = await _db.WarnList.Where(x => x.UserID == guildUser.Id).ToArrayAsync();
+        Console.WriteLine($"Data count: {data.Count()}");
     }
 }
