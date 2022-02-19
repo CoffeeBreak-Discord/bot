@@ -37,14 +37,13 @@ public partial class ModerationModule
         }
 
         // Insert data to database
-        Models.WarnList warnList = new Models.WarnList
+        await _db.WarnList.AddAsync(new Models.WarnList
         {
             GuildID = this.Context.Guild.Id,
             UserID = guildUser.Id,
             ExecutorID = this.Context.User.Id,
             Reason = reason
-        };
-        await _db.WarnList.AddAsync(warnList);
+        });
         await _db.SaveChangesAsync();
         await this.RespondAsync($"{guildUser.Mention} successfully warned with reason:\n```{reason ?? "No reason"}```");
     }
