@@ -1,3 +1,4 @@
+using System.Linq;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -68,13 +69,14 @@ public partial class ModerationModule
         }
 
         // Get data from database
-        var data = await _db.WarnList.Where(x => x.UserID == guildUser.Id).ToArrayAsync();
+        var data = await _db.WarnList.Where(x => x.GuildID == this.Context.Guild.Id && x.UserID == guildUser.Id).ToArrayAsync();
         if (data.Count() == 0)
         {
             await this.RespondAsync("No record found!");
             return;
         }
 
-        Console.WriteLine($"Data count: {data.Count()}");
+        var map = data.Select((x, i) => $"{i}. {this.Context.Guild.GetUser(x.ExecutorID)}: {x.Reason} [{x.Timestamp}]");
+        await this.RespondAsync($"Warn list for {guildUser}:\n{string.Join("\n", map)}");
     }
 }
