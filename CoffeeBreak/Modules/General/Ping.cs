@@ -2,7 +2,7 @@ using Discord;
 using Discord.Interactions;
 
 namespace CoffeeBreak.Modules;
-public partial class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
+public partial class GeneralModule
 {
     [SlashCommand("ping", "Ping! - Show the ping / response time of the bot in ms")]
     public async Task Ping()

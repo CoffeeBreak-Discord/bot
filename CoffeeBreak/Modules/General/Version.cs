@@ -1,7 +1,7 @@
 using Discord.Interactions;
 
 namespace CoffeeBreak.Modules;
-public partial class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
+public partial class GeneralModule
 {
     [SlashCommand("version", "Print the bot version")]
     public async Task Version()
