@@ -13,8 +13,7 @@ nano .env
 dotnet restore
 
 # Run migrator (don't forget to run MariaDB)
-. ./export-env.sh ; dotnet run --project
-CoffeeBreak.Migrator/CoffeeBreak.Migrator.csproj
+. ./export-env.sh ; dotnet run --project CoffeeBreak.Migrator/CoffeeBreak.Migrator.csproj
 ```
 
 ## How to run (manually)
