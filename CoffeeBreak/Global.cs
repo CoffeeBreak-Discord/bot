@@ -1,4 +1,6 @@
-﻿namespace CoffeeBreak;
+﻿using CoffeeBreak.ThirdParty;
+
+namespace CoffeeBreak;
 public class Global
 {
     public class Constant
@@ -20,4 +22,12 @@ public class Global
         };
         public static readonly int Interval = 10;
     }
+
+    public static ColorPallete BotColors = new ColorPallete(new ColorPallete.RGBPlate[]
+    {
+        new ColorPallete.RGBPlate(135, 100, 69),
+        new ColorPallete.RGBPlate(202, 150, 92),
+        new ColorPallete.RGBPlate(238, 195, 115),
+        new ColorPallete.RGBPlate(244, 223, 186)
+    });
 }
