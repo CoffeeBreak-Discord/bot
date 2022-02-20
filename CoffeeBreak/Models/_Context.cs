@@ -16,13 +16,6 @@ public class Context : DbContext
     {
         base.OnModelCreating(model);
 
-        model.Entity<WarnList>(entity =>
-        {
-            entity.HasKey(e => e.ID);
-            entity.Property(e => e.GuildID).IsRequired();
-            entity.Property(e => e.UserID).IsRequired();
-            entity.Property(e => e.ExecutorID).IsRequired();
-            entity.Property(e => e.Reason).IsRequired();
-        });
+        Models.WarnList.Relations(model);
     }
 }

@@ -1,7 +1,8 @@
-﻿using Discord.WebSocket;
+﻿using CoffeeBreak.ThirdParty;
+using CoffeeBreak.Services;
+using Discord.WebSocket;
 using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
-using CoffeeBreak.Services;
 
 namespace CoffeeBreak;
 public partial class Program
@@ -21,7 +22,10 @@ public partial class Program
             .AddSingleton<CommandHandlerService>()
 
             // Game Activity
-            .AddSingleton<GameActivityService>();
+            .AddSingleton<GameActivityService>()
+            
+            // Database
+            .AddSingleton<DatabaseService>();
     }
 
     private async void SetExtraStep(ServiceProvider build)
@@ -31,7 +35,14 @@ public partial class Program
         // "extra step" in here.
 
         // Initialize Command Handler async
+        Logging.Info("Initialize command handler", "Injector");
         await build.GetRequiredService<CommandHandlerService>().InitializeAsync();
+        Logging.Info("Initializing successful!", "Injector");
+
+        // Check connection database
+        Logging.Info("Pinging database", "Injector");
+        await build.GetRequiredService<DatabaseService>().Database.CanConnectAsync();
+        Logging.Info("Pinging successful!", "Injector");
     }
 
     private ServiceProvider ConfigureServices()
