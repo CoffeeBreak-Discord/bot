@@ -40,14 +40,14 @@ public class ColorPallete
         }
     }
 
-    private RGBPlate[] _plate;
+    public RGBPlate[] Plate;
     public ColorPallete(RGBPlate[] plate)
     {
-            _plate = plate;
+            this.Plate = plate;
     }
 
     public RGBPlate Randomize()
     {
-        return _plate[new Random().Next(_plate.Count())];
+        return this.Plate[new Random().Next(this.Plate.Count())];
     }
 }
