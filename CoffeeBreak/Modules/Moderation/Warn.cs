@@ -8,6 +8,7 @@ public partial class ModerationModule
 {
     [SlashCommand("warn", "Set warn from specified user")]
     public async Task Warn(
+        [ChannelTypes(ChannelType.Text)] IChannel channel,
         [Summary(description: "Target user")] IUser user,
         [Summary(description: "Reason")] string reason = "No reason")
     {
@@ -49,7 +50,9 @@ public partial class ModerationModule
     }
 
     [SlashCommand("warnlist", "Get warn list from specified user")]
-    public async Task Warnlist(IUser user)
+    public async Task Warnlist(
+        [ChannelTypes(ChannelType.Text)] IChannel channel,
+        [Summary(description: "Target user")] IUser user)
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
 

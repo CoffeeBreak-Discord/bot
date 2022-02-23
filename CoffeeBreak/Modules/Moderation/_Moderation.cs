@@ -4,7 +4,6 @@ using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.Modules;
-[Group("moderation", "Moderation")]
 public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
 {
     private DiscordShardedClient _client;
