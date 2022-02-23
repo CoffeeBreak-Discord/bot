@@ -3,6 +3,12 @@
 namespace CoffeeBreak;
 public class Global
 {
+    public class Bot
+    {
+        public static string ProcessName = System.Diagnostics.Process.GetCurrentProcess().ProcessName ?? "CoffeeBreak";
+        public static string PrettyName = "Coffee Break";
+    }
+
     public class Constant
     {
         public readonly static ulong GUIDDevelopment = 937692307535302697;

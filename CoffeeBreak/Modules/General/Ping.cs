@@ -11,11 +11,14 @@ public partial class GeneralModule
         var randColor = Global.BotColors.Randomize();
 
         await this.RespondAsync(
-            embed: embed.WithColor(randColor.R, randColor.G, randColor.B).WithDescription("🏓 | Pong!").Build());
+            embed: embed.WithColor(randColor.IntCode).WithDescription("🏓 | Pong!").Build());
 
         IUserMessage Message = await this.GetOriginalResponseAsync();
         long TimeNow = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         long botPing = TimeNow - Message.Timestamp.ToUnixTimeMilliseconds();
+        
+        // Fix if ms < 0 so the result cannot be minus
+        botPing = botPing < 0 ? botPing * -1 : botPing;
 
         await this.ModifyOriginalResponseAsync(
             Message => Message.Embed = embed.WithColor(Color.Green).WithDescription($"🏓 | Pong! - **{botPing}ms**").Build());
