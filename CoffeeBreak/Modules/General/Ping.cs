@@ -1,3 +1,4 @@
+using CoffeeBreak.ThirdParty.StringModifier;
 using Discord;
 using Discord.Interactions;
 
@@ -11,16 +12,29 @@ public partial class GeneralModule
         var randColor = Global.BotColors.Randomize();
 
         await this.RespondAsync(
-            embed: embed.WithColor(randColor.IntCode).WithDescription("🏓 | Pong!").Build());
+            embed: embed.WithColor(randColor.IntCode).WithDescription("🏓 | Wait for it...").Build());
 
+        // Get offset ms from pinging message
         IUserMessage Message = await this.GetOriginalResponseAsync();
         long TimeNow = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         long botPing = TimeNow - Message.Timestamp.ToUnixTimeMilliseconds();
-        
+
         // Fix if ms < 0 so the result cannot be minus
         botPing = botPing < 0 ? botPing * -1 : botPing;
 
+        // Get offset ms from database pinging
+        TimeNow = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        long dbPing = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        await _db.Database.CanConnectAsync();
+        dbPing = (TimeNow - dbPing) + 1;
+
+        // Print it
+        string desc = DictTabbed.Generate(new Dictionary<string, string>
+        {
+            {"Discord", $"{botPing}ms"},
+            {"Database", $"{dbPing}ms"}
+        }, DictTabbed.Align.Right);
         await this.ModifyOriginalResponseAsync(
-            Message => Message.Embed = embed.WithColor(Color.Green).WithDescription($"🏓 | Pong! - **{botPing}ms**").Build());
+            Message => Message.Embed = embed.WithColor(Color.Green).WithDescription($"🏓 | **Pong!**\n```{desc}```").Build());
     }
 }
