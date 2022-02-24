@@ -113,7 +113,7 @@ public partial class GeneralModule
                     .WithAuthor(cmdName)
                     .WithThumbnailUrl("https://media.discordapp.net/attachments/946050537814655046/946050592596447262/question_mark.png")
                     .WithDescription(ctxCmd.Description ?? "No description")
-                    .AddField("Usage", $"{cmdName} {string.Join(' ', usages.ToArray())}");
+                    .AddField("Usage", $"{cmdName} {string.Join(' ', usages.ToArray())}{(usages.Count() > 0 ? "\n\nParameter `<param>` is required. Otherwise, parameter `[param]` is optional." : "")}");
                 
                 if (description.Count() > 0) embed.AddField("Description", string.Join("\n", description.ToArray()));
                 if (information.Count() > 0) embed.AddField("Information", string.Join("\n", information.ToArray()));
