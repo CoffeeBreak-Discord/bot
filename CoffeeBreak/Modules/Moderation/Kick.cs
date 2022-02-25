@@ -9,7 +9,6 @@ public partial class ModerationModule
     [RequireUserPermission(GuildPermission.KickMembers)]
     [SlashCommand("kick", "Kick user")]
     public async Task Kick(
-        [ChannelTypes(ChannelType.Text)] IChannel channel,
         [Summary(description: "Person who want to kicked")] IUser user,
         [Summary(description: "Reason why be kicked")] string reason = "No reason")
     {

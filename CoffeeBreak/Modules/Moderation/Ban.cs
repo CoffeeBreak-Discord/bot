@@ -9,7 +9,6 @@ public partial class ModerationModule
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("ban", "Ban user")]
     public async Task Ban(
-        [ChannelTypes(ChannelType.Text)] IChannel channel,
         [Summary(description: "Person who want to banned")] IUser user,
         [Summary(description: "Reason why be banned")] string reason = "No reason")
     {
@@ -47,7 +46,6 @@ public partial class ModerationModule
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("unban", "Ban user")]
     public async Task Unban(
-        [ChannelTypes(ChannelType.Text)] IChannel channel,
         [Summary(description: "Snowflake ID of user")] string userID)
     {
         // Check if command is executed in guild
