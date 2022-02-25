@@ -11,9 +11,8 @@ public partial class GeneralModule
     public async Task Help([Summary(description: "The command you can know how to use it")] string? command = null)
     {
         _cmdList = _cmd.SlashCommands;
-        var embedColor = Global.BotColors.Randomize();
         EmbedBuilder embed = new EmbedBuilder()
-            .WithColor(embedColor.IntCode)
+            .WithColor(Global.BotColors.Randomize().IntCode)
             .WithCurrentTimestamp()
             .WithFooter($"Requested by {this.Context.User}");
 
@@ -76,14 +75,14 @@ public partial class GeneralModule
                 foreach (var param in ctxCmd.Parameters)
                 {
                     var paramPrint = param.IsRequired ? $"<{param.Name}>" : $"[{param.Name}]";
-                    if (param.ChannelTypes.Count() == 0) usages.Add(paramPrint);
+                    usages.Add(paramPrint);
 
                     // Check if parameter have [ChannelTypes] and [Summary]
                     if (param.ChannelTypes.Count() > 0)
                     {
                         var chanType = param.ChannelTypes.Select(x => x.ToString());
                         information.Add(
-                            $"• This command can be executed **only** in `{string.Join("`, `", chanType)}` channel.");
+                            $"• Parameter `{paramPrint}` **only** can be used for `{string.Join("`, `", chanType)}` channel.");
                     }
                     if (param.Description != null)
                     {
