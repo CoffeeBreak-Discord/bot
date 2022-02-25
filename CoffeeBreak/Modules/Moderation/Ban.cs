@@ -14,6 +14,12 @@ public partial class ModerationModule
         [Summary(description: "Reason why be banned")] string reason = "No reason")
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
+        // Check if command is executed in guild
+        if (this.Context.Guild == null)
+        {
+            await this.RespondAsync("You can only using this module in Guild/Server.");
+            return;
+        }
 
         // Check if user didn't found
         if (guildUser == null)
