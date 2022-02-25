@@ -67,11 +67,10 @@ public partial class GeneralModule
                 List<string> description = new List<string>();
                 if (ctxCmd.Parameters.Count() > 0)
                 {
-                    bool notHiddenParams(Type param) => param != typeof(IChannel) || param != typeof(IUser);
                     foreach (var param in ctxCmd.Parameters)
                     {
                         var paramPrint = param.IsRequired ? $"<{param.Name}>" : $"[{param.Name}]";
-                        if (notHiddenParams(param.ParameterType.GetType())) usages.Add(paramPrint);
+                        if (param.ChannelTypes.Count() == 0) usages.Add(paramPrint);
 
                         // Check if parameter have [ChannelTypes] and [Summary]
                         if (param.ChannelTypes.Count() > 0)
@@ -82,7 +81,7 @@ public partial class GeneralModule
                         }
                         if (param.Description != null)
                         {
-                            if (notHiddenParams(param.ParameterType.GetType())) description.Add($"• `{paramPrint}` -> {param.Description}");
+                            if (param.ChannelTypes.Count() == 0) description.Add($"• `{paramPrint}` -> {param.Description}");
                         }
                     }
                 }
