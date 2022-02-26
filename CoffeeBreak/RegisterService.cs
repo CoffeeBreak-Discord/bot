@@ -3,6 +3,7 @@ using CoffeeBreak.Services;
 using Discord.WebSocket;
 using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace CoffeeBreak;
 public partial class Program
@@ -25,7 +26,11 @@ public partial class Program
             .AddSingleton<GameActivityService>()
             
             // Database
-            .AddSingleton<DatabaseService>();
+            .AddSingleton<DatabaseService>()
+            
+            // Redis
+            .AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()));
     }
 
     private async void SetExtraStep(ServiceProvider build)
