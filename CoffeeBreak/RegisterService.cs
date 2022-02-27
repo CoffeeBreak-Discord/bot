@@ -14,20 +14,15 @@ public partial class Program
         return new ServiceCollection()
             // Discord Shard Client
             .AddSingleton(new DiscordShardedClient(this._config))
-
             // Logging
             .AddSingleton<LoggingService>()
-
             // Interaction & Commands
             .AddSingleton<InteractionService>()
             .AddSingleton<CommandHandlerService>()
-
             // Game Activity
             .AddSingleton<GameActivityService>()
-            
             // Database
             .AddSingleton<DatabaseService>()
-            
             // Redis
             .AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()));
@@ -44,10 +39,15 @@ public partial class Program
         await build.GetRequiredService<CommandHandlerService>().InitializeAsync();
         Logging.Info("Initializing successful!", "Injector");
 
-        // Check connection database
+        // Check database connection
         Logging.Info("Pinging database", "Injector");
         await build.GetRequiredService<DatabaseService>().Database.CanConnectAsync();
-        Logging.Info("Pinging successful!", "Injector");
+        Logging.Info("Pinging database successful!", "Injector");
+
+        // Check redis connection
+        Logging.Info("Pinging cache pool", "Injector");
+        await build.GetRequiredService<IConnectionMultiplexer>().GetDatabase().PingAsync();
+        Logging.Info("Pinging cache pool successful!", "Injector");
     }
 
     private ServiceProvider ConfigureServices()

@@ -21,7 +21,7 @@ public class Logging
 
     public static void Info(string message, string source)
     {
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ResetColor();
         Console.Write("INFO ");
         Console.WriteLine(LogBuilder(message, source));
     }
@@ -30,7 +30,7 @@ public class Logging
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.Write("WARN ");
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ResetColor();
         Console.WriteLine(LogBuilder(message, source));
     }
 
@@ -38,7 +38,7 @@ public class Logging
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.Write("ERR  ");
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.ResetColor();
         Console.WriteLine(LogBuilder(message, source));
     }
 }
