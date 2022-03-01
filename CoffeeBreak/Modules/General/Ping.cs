@@ -28,11 +28,18 @@ public partial class GeneralModule
         await _db.Database.CanConnectAsync();
         dbPing = (TimeNow - dbPing) + 1;
 
+        // Get offset ms from redis pinging
+        TimeNow = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        long cachePing = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        await _cache.GetDatabase().PingAsync();
+        cachePing = (TimeNow - cachePing) + 1;
+
         // Print it
         string desc = DictTabbed.Generate(new Dictionary<string, string>
         {
-            {"Discord", $"{botPing}ms"},
-            {"Database", $"{dbPing}ms"}
+            { "Discord", $"{botPing}ms" },
+            { "Database", $"{dbPing}ms" },
+            { "Cache Pool", $"{cachePing}ms" }
         }, DictTabbed.Align.Right);
         await this.ModifyOriginalResponseAsync(
             Message => Message.Embed = embed.WithColor(Color.Green).WithDescription($"🏓 | **Pong!**\n```{desc}```").Build());
