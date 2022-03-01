@@ -10,8 +10,8 @@ public class LoggingService
     {
         client.Log += this.ClientLog;
         command.SlashCommandExecuted += this.SlashCommandExecuted;
-        command.ComponentCommandExecuted += this.ComponentCommandExecuted;
-        command.ModalCommandExecuted += this.ModalCommandExecuted;
+        //command.ComponentCommandExecuted += this.ComponentCommandExecuted;
+        //command.ModalCommandExecuted += this.ModalCommandExecuted;
     }
 
     private Task ClientLog(LogMessage msg)
@@ -33,7 +33,10 @@ public class LoggingService
 
     private Task SlashCommandExecuted(SlashCommandInfo cmdInfo, IInteractionContext ctx, IResult result)
     {
-        Logging.Info($"{ctx.User.Id}[{ctx.Guild.Id}] executing /{cmdInfo.Name}", "SlashCommand");
+        var execName = cmdInfo.Module.IsSlashGroup
+            ? $"/{cmdInfo.Module.SlashGroupName} {cmdInfo.Name}"
+            : $"/{cmdInfo.Name}";
+        Logging.Info($"{ctx.User.Id}[{ctx.Guild.Id}] executing {execName}", "SlashCommand");
 
         if (result.Error != null)
             Logging.Error($"Something wrong when executing /{cmdInfo.Name}\n{result.ErrorReason}", "SlashCommand");
