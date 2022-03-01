@@ -38,7 +38,7 @@ public partial class GeneralModule
             }
 
             cmdPrintList.Add(cmd.Module.SlashGroupName == null ? cmd.Name : $"{cmd.Module.SlashGroupName} {cmd.Name}");
-            cmdPrint.Add(cmd.Module.Name, cmdPrintList);
+            cmdPrint.Add(cmd.Module.Name + (cmd.Module.IsSlashGroup ? "D" : null), cmdPrintList);
         }
 
         // Print to embed
@@ -47,7 +47,10 @@ public partial class GeneralModule
             // Add space into PascalCase, split it, and remove "Module"
             // ref: https://stackoverflow.com/a/3103795
             string[] oldKey = new Regex(@"(?!^)(?=[A-Z])").Replace(cmd.Key, " ").Split(" ");
-            string newKey = string.Join(" ", oldKey.Take(oldKey.Count() - 1));
+            bool ifDerivative = oldKey[oldKey.Length - 1] == "D";
+            string newKey = string.Join(" ", oldKey.Take(oldKey.Count() - (ifDerivative ? 2 : 1)));
+            // If the command is derivative command/nested
+            newKey += ifDerivative ? " [Derivative]" : null;
             embed
                 .AddField(newKey, $"`{string.Join("`, `", cmd.Value.ToArray())}`", true)
                 .WithDescription("Type `/help <command>` to get more info on a specific command.")
