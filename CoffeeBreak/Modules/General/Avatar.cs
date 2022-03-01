@@ -13,9 +13,14 @@ public partial class GeneralModule
         EmbedBuilder embed = new EmbedBuilder()
             .WithColor(Global.BotColors.Randomize().IntCode)
             .WithAuthor(user)
-            .WithTitle("Avatar URL")
+            .WithTitle("Here's the avatar.")
             .WithUrl(Avatar)
             .WithImageUrl(Avatar);
-        await this.RespondAsync(embed: embed.Build());
+        ComponentBuilder component = new ComponentBuilder()
+            .WithButton(
+                "Download Image",
+                style: ButtonStyle.Link,
+                url: user.GetAvatarUrl(size: 2048) ?? user.GetDefaultAvatarUrl());
+        await this.RespondAsync(embed: embed.Build(), components: component.Build());
     }
 }
