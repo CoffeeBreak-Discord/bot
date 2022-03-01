@@ -1,8 +1,11 @@
-﻿using CoffeeBreak.ThirdParty;
+﻿using CoffeeBreak.Modules;
+using CoffeeBreak.ThirdParty;
 
 namespace CoffeeBreak;
 public class Global
 {
+    public static State State = new State();
+
     public class Bot
     {
         public static string ProcessName = System.Diagnostics.Process.GetCurrentProcess().ProcessName ?? "CoffeeBreak";
