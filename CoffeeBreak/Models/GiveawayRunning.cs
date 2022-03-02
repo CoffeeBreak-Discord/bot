@@ -15,7 +15,7 @@ public class GiveawayRunning
     public DateTime ExpiredDate { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)] public bool IsExpired { get; set; } = false;
     public int WinnerCount { get; set; } = 0;
-    public string Role { get; set; } = "";
+    public string? Role { get; set; }
 
     public static void Relations(ModelBuilder model)
     {
@@ -30,7 +30,6 @@ public class GiveawayRunning
             entity.Property(e => e.GiveawayName).IsRequired();
             entity.Property(e => e.ExpiredDate).IsRequired();
             entity.Property(e => e.WinnerCount).IsRequired();
-            entity.Property(e => e.Role).IsRequired();
         });
     }
 }
