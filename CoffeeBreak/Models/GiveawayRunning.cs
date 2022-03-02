@@ -8,7 +8,6 @@ public class GiveawayRunning
     public ulong ID { get; set; } = 0;
     public string HashID { get; set; } = "";
     public ulong GuildID { get; set; } = 0;
-    public ulong ChannelID { get; set; } = 0;
     public ulong MessageID { get; set; } = 0;
     public ulong UserMakerID { get; set; } = 0;
     public ulong UserExecutorID { get; set; } = 0;
@@ -25,7 +24,6 @@ public class GiveawayRunning
             entity.HasKey(e => e.ID);
             entity.Property(e => e.HashID).IsRequired();
             entity.Property(e => e.GuildID).IsRequired();
-            entity.Property(e => e.ChannelID).IsRequired();
             entity.Property(e => e.MessageID).IsRequired();
             entity.Property(e => e.UserMakerID).IsRequired();
             entity.Property(e => e.UserExecutorID).IsRequired();

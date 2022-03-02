@@ -10,7 +10,6 @@ public class _20220302_Giveaway : Migration
             .WithColumn("ID").AsInt64().PrimaryKey().Identity().NotNullable()
             .WithColumn("HashID").AsString().Unique().NotNullable()
             .WithColumn("GuildID").AsInt64().NotNullable()
-            .WithColumn("ChannelID").AsInt64().NotNullable()
             .WithColumn("MessageID").AsInt64().NotNullable()
             .WithColumn("UserMakerID").AsInt64().NotNullable()
             .WithColumn("UserExecutorID").AsInt64().NotNullable()
