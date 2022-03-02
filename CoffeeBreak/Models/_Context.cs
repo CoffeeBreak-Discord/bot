@@ -4,7 +4,8 @@ namespace CoffeeBreak.Models;
 public class Context : DbContext
 {
     public DbSet<WarnList> WarnList => this.Set<WarnList>();
-    public DbSet<Giveaway> Giveaway => this.Set<Giveaway>();
+    public DbSet<GiveawayRunning> GiveawayRunning => this.Set<GiveawayRunning>();
+    public DbSet<GiveawayConfig> GiveawayConfig => this.Set<GiveawayConfig>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
     {
@@ -18,6 +19,7 @@ public class Context : DbContext
         base.OnModelCreating(model);
 
         Models.WarnList.Relations(model);
-        Models.Giveaway.Relations(model);
+        Models.GiveawayRunning.Relations(model);
+        Models.GiveawayConfig.Relations(model);
     }
 }
