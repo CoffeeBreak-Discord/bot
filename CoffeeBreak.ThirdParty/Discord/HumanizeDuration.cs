@@ -3,13 +3,8 @@ using System.Text.RegularExpressions;
 namespace CoffeeBreak.ThirdParty.Discord;
 public class HumanizeDuration
 {
-    private string _input;
+    public DateTimeOffset time = new DateTimeOffset(DateTime.Now);
     public HumanizeDuration(string input)
-    {
-        _input = input;
-    }
-
-    private TimeSpan Parse()
     {
         var units = new Dictionary<string, int>()
         {
@@ -21,25 +16,18 @@ public class HumanizeDuration
             {@"(\d+)(w|week[|s])", 604800000 },
         };
 
-        var timeSpan = new TimeSpan();
-
         foreach (var unit in units)
         {
-            var matches = Regex.Matches(_input, unit.Key);
+            var matches = Regex.Matches(input, unit.Key);
             foreach (Match match in matches)
             {
-                var amount = System.Convert.ToInt32(match.Groups[1].Value);
-                timeSpan = timeSpan.Add(TimeSpan.FromMilliseconds(unit.Value * amount));
+                var amount = System.Convert.ToInt64(match.Groups[1].Value);
+                this.time = this.time.AddMilliseconds(unit.Value * amount);
             }
         }
-
-        return timeSpan;
     }
 
-    public TimeSpan ToTimeSpan() => this.Parse();
+    public TimeSpan ToTimeSpan() => this.time.Offset;
 
-    public DateTime ToDateTime()
-    {
-        return DateTime.Now.Add(this.Parse());
-    }
+    public DateTime ToDateTime() => this.time.DateTime;
 }
