@@ -28,7 +28,7 @@ public class HumanizeDuration
             var matches = Regex.Matches(_input, unit.Key);
             foreach (Match match in matches)
             {
-                var amount = System.Convert.ToInt32(match.Groups[1].Value);
+                var amount = System.Convert.ToInt64(match.Groups[1].Value);
                 timeSpan = timeSpan.Add(TimeSpan.FromMilliseconds(unit.Value * amount));
             }
         }
