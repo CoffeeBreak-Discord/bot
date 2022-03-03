@@ -57,7 +57,6 @@ public partial class RaffleModule
         {
             // Initialize model first because we need some manipulate data
             Models.GiveawayRunning data = new Models.GiveawayRunning();
-            data.GuildID = this.Context.Guild.Id;
             data.GiveawayName = modal.GiveawayName;
             data.WinnerCount = int.Parse(modal.Winner);
             data.ExpiredDate = new HumanizeDuration(modal.Duration).ToDateTime();
@@ -90,7 +89,8 @@ public partial class RaffleModule
             data.Role = roles.Count == 0 ? null : string.Join(',', roles.ToArray());
 
             // Get channel id and send giveaway to channel because we need messageID
-            ulong channelID = (await _db.GiveawayConfig.Where(x => x.GuildID == this.Context.Guild.Id).FirstAsync()).ChannelID;
+            var channelConfig = await _db.GiveawayConfig.Where(x => x.GuildID == this.Context.Guild.Id).FirstAsync();
+            ulong channelID = channelConfig.ChannelID;
             SocketTextChannel? channel = this.Context.Guild.GetTextChannel(channelID);
             if (channel == null)
             {
@@ -101,12 +101,12 @@ public partial class RaffleModule
             }
             var message = await channel.SendMessageAsync(embed: this.GenerateEmbed(data));
             data.MessageID = message.Id;
+            data.GiveawayConfig = channelConfig;
             
             // Edit message so we can get hash ID
-            data.HashID = HashFactory.GetHash(SHA256.Create(), $"{this.Context.Guild.Id}:{channelID}:{message.Id}");
             ComponentBuilder comp = new ComponentBuilder()
-                .WithButton("Join! 🪅", $"modal_giveaway_join:{data.HashID}", ButtonStyle.Success)
-                .WithButton("Leave ❌", $"modal_giveaway_cancel:{data.HashID}", ButtonStyle.Danger);
+                .WithButton("Join! 🪅", $"modal_giveaway_join:", ButtonStyle.Success)
+                .WithButton("Leave ❌", $"modal_giveaway_cancel:", ButtonStyle.Danger);
             await message.ModifyAsync(m => m.Components = comp.Build());
 
             // Send to database
@@ -114,12 +114,12 @@ public partial class RaffleModule
             await _db.SaveChangesAsync();
             await this.RespondAsync(
                 $"Giveaway successfully created! Check <#{channelID}> to see your giveaway. "
-                + $"If you want to edit some giveaway, you can use `/giveaway modify id:{data.HashID} [param]`.",
+                + $"If you want to edit some giveaway, you can use `/giveaway modify id: [param]`.",
                 ephemeral: true);
             }
         catch (System.Exception ex)
         {
-            Logging.Error($"{ex.Message}\nInner: {ex.InnerException.ToString() ?? "No Inner"}\n{ex.StackTrace}", "Giveaway");
+            Logging.Error($"{(ex.InnerException == null ? ex.Message : ex.InnerException.Message)}\n{ex.StackTrace}", "Giveaway");
         }
     }
 
@@ -139,8 +139,7 @@ public partial class RaffleModule
             .AddField("Creator", makerUser.Mention, true)
             .AddField("Minimum Role", role == "" ? "No role" : role, role == "")
             .AddField("End Date", running.ExpiredDate.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"))
-            .AddField("Entries/Winner", $"0 people / {running.WinnerCount} winner")
-            .AddField("Hash ID", running.HashID);
+            .AddField("Entries/Winner", $"0 people / {running.WinnerCount} winner");
         return embed.Build();
     }
 
