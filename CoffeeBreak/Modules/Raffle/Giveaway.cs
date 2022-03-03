@@ -128,6 +128,7 @@ public partial class RaffleModule
         var ctxUser = this.Context.Guild.GetUser(running.UserExecutorID)!;
         var makerUser = this.Context.Guild.GetUser(running.UserMakerID)!;
         var role = running.Role == null ? "" : string.Join(", ", running.Role.Split(',').Select(x => $"<@&{x}>"));
+        DateTimeOffset EndTime = running.ExpiredDate;
 
         EmbedBuilder embed = new EmbedBuilder()
             .WithColor(Global.BotColors.Randomize().IntCode)
@@ -138,7 +139,7 @@ public partial class RaffleModule
             .WithDescription(running.GiveawayName)
             .AddField("Creator", makerUser.Mention, true)
             .AddField("Minimum Role", role == "" ? "No role" : role, role == "")
-            .AddField("End Date", running.ExpiredDate.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"))
+            .AddField("End Time", $"<t:{EndTime.ToUnixTimeSeconds()}:F> which is <t:{EndTime.ToUnixTimeSeconds()}:R> from now")
             .AddField("Entries/Winner", $"0 people / {running.WinnerCount} winner");
         return embed.Build();
     }
