@@ -28,4 +28,18 @@ services:
     restart: unless-stopped
     volumes:
       - "./.devel-data/mariadb/data:/var/lib/mysql"
+  redis:
+    image: redis:latest
+    networks:
+      private:
+        ipv4_address: 172.20.0.3
+        aliases:
+          - redis.private
+      internet:
+        aliases:
+          - redis.internet
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./.devel-data/redis/data:/data"
 version: "3"
