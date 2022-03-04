@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 as build-stage
 
 # Set WORKDIR
-WORKDIR /tmp/build
+WORKDIR /app
 
 # Build Args available
 ARG PROJECT_NAME=CoffeeBreak
@@ -11,8 +11,8 @@ ARG DOTNET_CONFIGURATION=Release
 COPY . .
 
 # Build .NET Project
-RUN dotnet publish --configuration ${DOTNET_CONFIGURATION} --use-current-runtime --self-contained true --output /tmp/build-output ${PROJECT_NAME} && \
-    ln -sf ./${PROJECT_NAME} /tmp/build-output/run
+RUN dotnet publish --configuration ${DOTNET_CONFIGURATION} --use-current-runtime --self-contained true --output /build ${PROJECT_NAME} && \
+    ln -sf ./${PROJECT_NAME} /build/run
 
 # Prepare for Production
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
@@ -26,7 +26,7 @@ ENV VERSION=${VERSION} \
     COMMIT=${COMMIT}
 
 # Copy the built app from build stage
-COPY --from=build-stage /tmp/build-output .
+COPY --from=build-stage /build .
 
 # Now we can run the app with DOCKER CMD
 CMD ["./run"]
