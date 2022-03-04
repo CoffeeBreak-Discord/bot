@@ -7,7 +7,7 @@ public partial class GeneralModule
     public async Task Version()
     {
         string Version = System.Environment.GetEnvironmentVariable("VERSION") ?? "Development";
-        string CommitSHA = System.Environment.GetEnvironmentVariable("COMMIT") ?? "Unknown";
-        await this.RespondAsync($"Version: **{Version}**\nCommit SHA: **{CommitSHA}**");
+        string CommitHash = System.Environment.GetEnvironmentVariable("COMMIT") ?? "Unknown";
+        await this.RespondAsync($"Version: **{Version}**\nCommit Hash: **{CommitHash}**");
     }
 }
