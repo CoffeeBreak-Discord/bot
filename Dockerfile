@@ -3,16 +3,15 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 as build-stage
 # Set WORKDIR
 WORKDIR /tmp/build
 
-# Build Args available, DOTNET_RUNTIME_TARGET needs to be linux-musl-x64, because we used Alpine, so it would not be a BUILD ARG
+# Build Args available
 ARG PROJECT_NAME=CoffeeBreak
 ARG DOTNET_CONFIGURATION=Release
-ENV DOTNET_RUNTIME_TARGET=linux-x64
 
 # Copy projects files
 COPY . .
 
 # Build .NET Project
-RUN dotnet publish -c ${DOTNET_CONFIGURATION} -r ${DOTNET_RUNTIME_TARGET} --self-contained true -o /tmp/build-output ${PROJECT_NAME} && \
+RUN dotnet publish -c ${DOTNET_CONFIGURATION} --use-current-runtime --self-contained true -o /tmp/build-output ${PROJECT_NAME} && \
     ln -sf ./${PROJECT_NAME} /tmp/build-output/run
 
 # Prepare for Production
