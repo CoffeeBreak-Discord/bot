@@ -11,7 +11,7 @@ ARG DOTNET_CONFIGURATION=Release
 COPY . .
 
 # Build .NET Project
-RUN dotnet publish -c ${DOTNET_CONFIGURATION} --use-current-runtime --self-contained true -o /tmp/build-output ${PROJECT_NAME} && \
+RUN dotnet publish --configuration ${DOTNET_CONFIGURATION} --use-current-runtime --self-contained true --output /tmp/build-output ${PROJECT_NAME} && \
     ln -sf ./${PROJECT_NAME} /tmp/build-output/run
 
 # Prepare for Production
