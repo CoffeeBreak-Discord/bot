@@ -27,13 +27,13 @@ public partial class GeneralModule
             .WithCurrentTimestamp()
             .WithFooter($"Requested by {this.Context.User}");
 
-        switch (menu)            
+        switch (menu)
         {
             case ChoiceServerInfo.Normal: this.GetServerInfo(ref embed, guild); break;
             case ChoiceServerInfo.Roles: this.GetRoleServerInfo(ref embed, guild); break;
             case ChoiceServerInfo.Subscription: embed.WithDescription("Not implemented, sorry"); break;
         }
-        
+
         await this.RespondAsync(embed: embed.Build());
     }
 
