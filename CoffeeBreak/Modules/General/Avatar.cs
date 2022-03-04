@@ -8,11 +8,11 @@ public partial class GeneralModule
     public async Task Avatar(
         [Summary(description: "Target user that you want to stalk")] IUser? user = null)
     {
-        var ctxUser = user == null ? this.Context.User : user;
-        string Avatar = ctxUser.GetAvatarUrl(size: 512) ?? ctxUser.GetDefaultAvatarUrl();
+        user ??= this.Context.User;
+        string Avatar = user.GetAvatarUrl(size: 512) ?? user.GetDefaultAvatarUrl();
         EmbedBuilder embed = new EmbedBuilder()
             .WithColor(Global.BotColors.Randomize().IntCode)
-            .WithAuthor(ctxUser)
+            .WithAuthor(user)
             .WithTitle("Avatar URL")
             .WithUrl(Avatar)
             .WithImageUrl(Avatar);
