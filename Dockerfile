@@ -11,9 +11,6 @@ ENV DOTNET_RUNTIME_TARGET=linux-x64
 # Copy projects files
 COPY . .
 
-# Restore .NET dependencies
-RUN dotnet restore -r ${DOTNET_RUNTIME_TARGET} ${PROJECT_NAME}
-
 # Build .NET Project
 RUN dotnet publish -c ${DOTNET_CONFIGURATION} -r ${DOTNET_RUNTIME_TARGET} --no-restore --self-contained true -o /tmp/build-output ${PROJECT_NAME} && \
     ln -sf ./${PROJECT_NAME} /tmp/build-output/run
