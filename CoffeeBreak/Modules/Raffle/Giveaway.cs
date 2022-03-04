@@ -30,7 +30,17 @@ public partial class RaffleModule
                 return;
             }
 
-            await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>("ModalGiveaway");
+            // Make Select Menu
+            var menuBuilder = new SelectMenuBuilder()
+                .WithPlaceholder("Select an option").WithCustomId("select_menu_giveaway")
+                .WithMinValues(1).WithMaxValues(1)
+                .AddOption("Role Required", "role_required", "Choose if entries must have role")
+                .AddOption("No role limit", "role_none");
+            var builder = new ComponentBuilder().WithSelectMenu(menuBuilder);
+            await this.RespondAsync(
+                "Before you make a giveaway, please choose below:",
+                components: builder.Build(),
+                ephemeral: true);
         }
 
         [SlashCommand("channel", "Set channel giveaway")]
@@ -41,7 +51,7 @@ public partial class RaffleModule
             channel = channel == null ? this.Context.Channel as ITextChannel : channel;
             if (channel == null)
             {
-                await this.RespondAsync("Channel not valid, please try again.", ephemeral: true);
+                await this.RespondAsync("Channel not valid, please try again.");
                 return;
             }
 
@@ -55,10 +65,37 @@ public partial class RaffleModule
         }
     }
 
-    [ModalInteraction("ModalGiveaway")]
-    public async Task GiveawayModalResponse(GiveawayModal modal)
+    [ComponentInteraction("select_menu_giveaway")]
+    public async Task GiveawaySelectRoleResponse(string[] selectedMenu)
     {
-        await this.RespondAsync("Hello world");
+        string menu = selectedMenu[0];
+        if (menu == "role_none")
+        {
+            await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>("modal_giveaway:0");
+            return;
+        }
+
+        var menuBuilder = new SelectMenuBuilder()
+            .WithPlaceholder("Select role").WithCustomId("select_menu_giveaway_role")
+            .WithMinValues(1).WithMaxValues(1);
+        foreach (var role in this.Context.Guild.Roles)
+            menuBuilder.AddOption(role.Name, role.Id.ToString());
+        var builder = new ComponentBuilder().WithSelectMenu(menuBuilder);
+
+        await this.RespondAsync(
+            "Choose the role required below:\n*Dismiss this message if you want to cancel this command.",
+            components: builder.Build(),
+            ephemeral: true);
+    }
+
+    [ComponentInteraction("select_menu_giveaway_role")]
+    public async Task GiveawaySelectVerifiedRoleResponse(string[] selectedMenu)
+        => await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>($"modal_giveaway:{selectedMenu[0]}");
+
+    [ModalInteraction("modal_giveaway:*")]
+    public async Task GiveawayModalResponse(string roleID, GiveawayModal modal)
+    {
+        await this.RespondAsync(roleID);
     }
 
     private Embed GenerateEmbed(Models.GiveawayRunning running)
