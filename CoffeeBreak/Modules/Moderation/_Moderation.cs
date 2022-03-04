@@ -38,7 +38,7 @@ public partial class ModerationModule : InteractionModuleBase<ShardedInteraction
         // Set error first to saving some line
         ctx.IsError = true;
         ctx.Message = "This command cannot executed properly because the target is ";
-        
+
         if (getFilter(FilterPermission.Himself) && this.Context.User.Id == guildUser.Id)
         {
             ctx.Message += "yourself.";
