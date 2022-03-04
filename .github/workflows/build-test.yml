@@ -1,4 +1,4 @@
-name: .NET build test
+name: .NET build & test
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-dotnet@v2.0.0
         with:
           dotnet-version: 6.x
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.7
         with:
           path: ~/.nuget/packages
         # Look to see if there is a cache hit for the corresponding requirements file
@@ -30,4 +30,4 @@ jobs:
       - name: Build project
         run: dotnet build --no-restore
       - name: Test
-        run: dotnet test --verbosity normal
+        run: dotnet test --no-build --verbosity detailed
