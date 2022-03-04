@@ -17,7 +17,7 @@ public class Database
         string server = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost";
         string port = Environment.GetEnvironmentVariable("REDIS_PORT") ?? "6379";
         string password = Environment.GetEnvironmentVariable("REDIS_PASSWORD") ?? "";
-    
+
         return new ConfigurationOptions
         {
             EndPoints = { $"{server}:{port}" },

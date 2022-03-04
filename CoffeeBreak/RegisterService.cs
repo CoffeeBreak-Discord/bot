@@ -57,7 +57,7 @@ public partial class Program
         this.SetExtraStep(build);
 
         foreach (var service in services.ToArray()) build.GetRequiredService(service.ServiceType);
-        
+
         return build;
     }
 }

@@ -6,7 +6,7 @@ namespace CoffeeBreak.Modules;
 public partial class GeneralModule
 {
     private IReadOnlyList<SlashCommandInfo> _cmdList = new List<SlashCommandInfo>();
-    
+
     [SlashCommand("help", "List all the command in this bot")]
     public async Task Help([Summary(description: "The command you can know how to use it")] string? command = null)
     {
@@ -59,7 +59,7 @@ public partial class GeneralModule
     private void GenerateShowHelp(ref EmbedBuilder embed, string command)
     {
         var searchCmd = _cmdList.Where(x => x.Name == command || $"{x.Module.SlashGroupName} {x.Name}" == command);
-        
+
         // If command found
         if (searchCmd.Count() > 0)
         {
@@ -120,7 +120,7 @@ public partial class GeneralModule
                 .AddField("Usage",
                     $"{cmdName} {string.Join(' ', usages.ToArray())}{(usages.Count() > 0 ? "\n\nParameter `<param>` is required. Otherwise, parameter `[param]` is optional." : "")}",
                     true);
-            
+
             if (description.Count() > 0) embed.AddField("Description", string.Join("\n", description.ToArray()), true);
             if (information.Count() > 0) embed.AddField("Information", string.Join("\n", information.ToArray()));
         }

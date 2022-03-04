@@ -4,7 +4,7 @@ public static class Interval
     public static System.Timers.Timer SetInterval(Action action, int timeout)
     {
         var timer = new System.Timers.Timer(timeout);
-        timer.Elapsed += (s, e) => 
+        timer.Elapsed += (s, e) =>
         {
             timer.Enabled = false;
             action();

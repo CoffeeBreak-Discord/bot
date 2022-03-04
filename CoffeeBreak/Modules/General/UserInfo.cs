@@ -22,7 +22,7 @@ public partial class GeneralModule
             .WithThumbnailUrl(ctxUser.GetAvatarUrl())
             .WithCurrentTimestamp()
             .WithFooter($"Requested by {this.Context.User}");
-        
+
         switch (menu)
         {
             case ChoiceUserInfo.Normal: this.GetNormalUserInfo(ref embed, ctxUser); break;
