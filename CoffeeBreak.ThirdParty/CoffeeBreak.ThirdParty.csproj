@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="3.4.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+    <PackageReference Include="Discord.Net" Version="3.3.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.43" />
   </ItemGroup>
 
 </Project>
