@@ -21,7 +21,7 @@ public class _20220302_Giveaway : Migration
             .WithColumn("ExpiredDate").AsDateTime().NotNullable()
             .WithColumn("IsExpired").AsBoolean().WithDefaultValue(false).NotNullable()
             .WithColumn("WinnerCount").AsInt16().NotNullable()
-            .WithColumn("Role").AsString().Nullable();
+            .WithColumn("RequiredRole").AsInt64().Nullable();
     }
 
     public override void Down()

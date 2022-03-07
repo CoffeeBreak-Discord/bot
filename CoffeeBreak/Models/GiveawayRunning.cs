@@ -14,7 +14,7 @@ public class GiveawayRunning
     public DateTime ExpiredDate { get; set; }
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)] public bool IsExpired { get; set; } = false;
     public int WinnerCount { get; set; } = 0;
-    public string? Role { get; set; }
+    public ulong? RequiredRole { get; set; }
 
     public static void Relations(ModelBuilder model)
     {

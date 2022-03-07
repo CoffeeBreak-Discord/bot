@@ -21,8 +21,8 @@ public partial class RaffleModule
         [SlashCommand("start", "Start the giveaway.")]
         public async Task Start()
         {
-            var checkChannel = await _db.GiveawayConfig.Where(x => x.GuildID == this.Context.Guild.Id).ToArrayAsync();
-            if (checkChannel.Count() == 0)
+            var checkChannel = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+            if (checkChannel == null)
             {
                 await this.RespondAsync(
                     "Before using this command, set your giveaway channel using `/giveaway channel`.",
@@ -55,23 +55,34 @@ public partial class RaffleModule
                 return;
             }
 
-            await _db.GiveawayConfig.AddAsync(new Models.GiveawayConfig
+            var entity = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+            if (entity != null)
             {
-                GuildID = this.Context.Guild.Id,
-                ChannelID = channel.Id
-            });
+                entity.ChannelID = channel.Id;
+                _db.Update(entity);
+            }
+            else
+            {
+                await _db.GiveawayConfig.AddAsync(new Models.GiveawayConfig
+                {
+                    GuildID = this.Context.Guild.Id,
+                    ChannelID = channel.Id
+                });
+            }
             await _db.SaveChangesAsync();
             await this.RespondAsync($"<#{this.Context.Channel.Id}> successfully set as Giveaway Channel.");
         }
     }
 
+    // If user spawning giveaway, first of all user will teleport to
+    // this interaction to parse the menu value.
     [ComponentInteraction("select_menu_giveaway")]
     public async Task GiveawaySelectRoleResponse(string[] selectedMenu)
     {
         string menu = selectedMenu[0];
         if (menu == "role_none")
         {
-            await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>("modal_giveaway:0");
+            await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>("modal_giveaway:none;0");
             return;
         }
 
@@ -83,24 +94,87 @@ public partial class RaffleModule
         var builder = new ComponentBuilder().WithSelectMenu(menuBuilder);
 
         await this.RespondAsync(
-            "Choose the role required below:\n*Dismiss this message if you want to cancel this command.",
+            "Choose the role required below:\n*Dismiss this message if you want to cancel this command.*",
             components: builder.Build(),
             ephemeral: true);
     }
 
+    // If user choose the role that required for giveaway, will teleport
+    // to this interaction
     [ComponentInteraction("select_menu_giveaway_role")]
-    public async Task GiveawaySelectVerifiedRoleResponse(string[] selectedMenu)
-        => await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>($"modal_giveaway:{selectedMenu[0]}");
+    public async Task GiveawaySelectVerifiedRequiredRoleResponse(string[] selectedMenu)
+        => await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>($"modal_giveaway:required;{selectedMenu[0] ?? "0"}");
 
-    [ModalInteraction("modal_giveaway:*")]
-    public async Task GiveawayModalResponse(string roleID, GiveawayModal modal)
+    [ModalInteraction("modal_giveaway:*;*")]
+    public async Task GiveawayModalResponse(string mode, string roleID, GiveawayModal modal)
     {
-        await this.RespondAsync(roleID);
+        Models.GiveawayRunning data = new Models.GiveawayRunning();
+        data.GiveawayName = modal.GiveawayName;
+        data.GiveawayNote = modal.Note;
+        data.UserID = this.Context.User.Id;
+        data.WinnerCount = int.Parse(modal.Winner);
+        data.ExpiredDate = new HumanizeDuration(modal.Duration).ToDateTime();
+
+        // Parse mode except for none
+        if (mode == "required")
+        {
+            var role = this.Context.Guild.GetRole(ulong.Parse(roleID));
+            if (role != null) data.RequiredRole = role.Id;
+        }
+
+        // Get channel id and send giveaway to channel
+        var channelConf = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        SocketTextChannel? channel = this.Context.Guild.GetTextChannel(channelConf!.ChannelID);
+        if (channel == null)
+        {
+            await this.RespondAsync(
+                "Channel not found, please set giveaway channel with executing `/giveaway channel`.",
+                ephemeral: true);
+            return;
+        }
+        var message = await channel.SendMessageAsync("Generate giveaway...");
+        data.MessageID = message.Id;
+
+        // Set button to giveaway message
+        var comp = new ComponentBuilder()
+            .WithButton("Turn me in! 🎉", $"button_giveaway_toggle:", ButtonStyle.Primary)
+            .Build();
+        await message.ModifyAsync(Message =>
+        {
+            Message.Components = comp;
+            Message.Embed = this.GenerateEmbed(data);
+            Message.Content = null;
+        });
+        data.GiveawayConfig = channelConf;
+
+        await _db.GiveawayRunning.AddAsync(data);
+        await _db.SaveChangesAsync();
+        await this.RespondAsync(
+            $"Giveaway successfully created! Check <#{data.GiveawayConfig.ChannelID}> to see your giveaway.\n"
+            + $"If you want to edit some giveaway, you can use `/giveaway modify id:{data.MessageID} [param]`.",
+            ephemeral: true);
     }
 
-    private Embed GenerateEmbed(Models.GiveawayRunning running)
+    private Embed GenerateEmbed(Models.GiveawayRunning data, SocketUser? winner = null)
     {
-        var embed = new EmbedBuilder();
+        DateTimeOffset endTime = data.ExpiredDate;
+        List<string> parseRole = new List<string>();
+
+        // If required role is available
+        if (data.RequiredRole != null)
+            parseRole.Add($"Required: <@&{data.RequiredRole}>");
+
+        var embed = new EmbedBuilder()
+            .WithTitle(winner == null ? "Giveaway Started!" : "Giveaway Ended!")
+            .WithThumbnailUrl("https://media.discordapp.net/attachments/946050537814655046/948615258078085120/tada.png?width=400&height=394")
+            .WithCurrentTimestamp()
+            .WithFooter(data.MessageID.ToString(), _client.CurrentUser.GetAvatarUrl())
+            .WithDescription(data.GiveawayName)
+            .AddField("Note", data.GiveawayNote)
+            .AddField("Creator", $"<@!{data.UserID}>", true)
+            .AddField("Role", parseRole.Count() == 0 ? "No minimum/required role." : string.Join("\n", parseRole.ToArray()), true)
+            .AddField("End Date", $"<t:{endTime.ToUnixTimeSeconds()}:F> which is <t:{endTime.ToUnixTimeSeconds()}:R> from now")
+            .AddField("Entries/Winner", $"0 people / {data.WinnerCount} winner", true);
         return embed.Build();
     }
 
@@ -117,7 +191,7 @@ public partial class RaffleModule
         public string Duration { get; set; } = default!;
 
         [InputLabel("How much winner?")]
-        [ModalTextInput("giveaway_winner_count", placeholder: "Ex: 1", initValue: "1")]
+        [ModalTextInput("giveaway_winner_count", placeholder: "Ex: 1", initValue: "1", maxLength: 3)]
         public string Winner { get; set; } = default!;
 
         [InputLabel("Some note?")]
