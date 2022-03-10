@@ -17,7 +17,9 @@ public partial class Program
                 GatewayIntents.Guilds |
                 GatewayIntents.GuildVoiceStates |
                 GatewayIntents.GuildBans |
-                GatewayIntents.GuildEmojis
+                GatewayIntents.GuildEmojis |
+                GatewayIntents.GuildMembers |
+                GatewayIntents.GuildScheduledEvents
         };
     }
 
