@@ -8,13 +8,19 @@ public partial class GeneralModule
     public async Task Avatar(
         [Summary(description: "Target user that you want to stalk")] IUser? user = null)
     {
-        var ctxUser = user == null ? this.Context.User : user;
+        user ??= this.Context.User;
+        string Avatar = user.GetAvatarUrl(size: 512) ?? user.GetDefaultAvatarUrl();
         EmbedBuilder embed = new EmbedBuilder()
             .WithColor(Global.BotColors.Randomize().IntCode)
-            .WithAuthor(ctxUser)
-            .WithTitle("Avatar URL")
-            .WithUrl(ctxUser.GetAvatarUrl(size: 512))
-            .WithImageUrl(ctxUser.GetAvatarUrl(size: 256));
-        await this.RespondAsync(embed: embed.Build());
+            .WithAuthor(user)
+            .WithTitle("Here's the avatar.")
+            .WithUrl(Avatar)
+            .WithImageUrl(Avatar);
+        ComponentBuilder component = new ComponentBuilder()
+            .WithButton(
+                "Download Image",
+                style: ButtonStyle.Link,
+                url: user.GetAvatarUrl(size: 2048) ?? user.GetDefaultAvatarUrl());
+        await this.RespondAsync(embed: embed.Build(), components: component.Build());
     }
 }
