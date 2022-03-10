@@ -4,8 +4,6 @@ using CoffeeBreak.ThirdParty;
 namespace CoffeeBreak;
 public class Global
 {
-    public static State State = new State();
-
     public class Bot
     {
         public static string ProcessName = System.Diagnostics.Process.GetCurrentProcess().ProcessName ?? "CoffeeBreak";
@@ -39,4 +37,22 @@ public class Global
         new ColorPallete.RGBPlate(238, 195, 115),
         new ColorPallete.RGBPlate(244, 223, 186)
     });
+
+    public class State
+    {
+        public class Giveaway
+        {
+            /// <summary>Interval for cache giveaway data in minute</summary>
+            public static readonly int MinuteInterval = 5;
+
+            /// <summary>
+            /// Caching for Giveaway. Will updated every <see cref="MinuteInterval"/> that
+            /// updated in each minutes.
+            /// <example><code>
+            /// GiveawayActive("guildID:channelID:messageID", expiredDate);
+            /// </code></example>
+            /// </summary>
+            public static Dictionary<string, DateTime> GiveawayActive = new Dictionary<string, DateTime>();
+        }
+    }
 }

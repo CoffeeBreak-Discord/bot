@@ -147,8 +147,23 @@ public partial class RaffleModule
         });
         data.GiveawayConfig = channelConf;
 
+        // Save to database
         await _db.GiveawayRunning.AddAsync(data);
         await _db.SaveChangesAsync();
+
+        // If the giveaway less than State.Giveaway.MinuteInterval, proceed to cache
+        TimeSpan ts = data.ExpiredDate - DateTime.Now;
+        int minDiff = (int) Math.Floor(ts.TotalMinutes);
+        string key = $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}";
+        int interval = Global.State.Giveaway.MinuteInterval;
+        if (interval >= minDiff)
+        {
+            Logging.Info($"Add {key} to State.Giveaway.GiveawayActive because the Giveaway less than {interval} minutes.", "GAPool");
+            Global.State.Giveaway.GiveawayActive.Add(
+                $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}",
+                data.ExpiredDate);
+        }
+
         await this.RespondAsync(
             $"Giveaway successfully created! Check <#{data.GiveawayConfig.ChannelID}> to see your giveaway.\n"
             + $"If you want to edit some giveaway, you can use `/giveaway modify id:{data.MessageID} [param]`.",
