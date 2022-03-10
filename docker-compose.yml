@@ -25,7 +25,6 @@ services:
           - mariadb.internet
     ports:
       - "3306:3306"
-    restart: unless-stopped
     volumes:
       - "./.devel-data/mariadb/data:/var/lib/mysql"
   redis:
