@@ -30,7 +30,7 @@ public partial class GeneralModule
 
         switch (menu)
         {
-            case ChoiceServerInfo.Normal: this.GetServerInfo(ref embed, guild, await _client.Rest.GetUserAsync(guild.OwnerId)); break;
+            case ChoiceServerInfo.Normal: this.GetServerInfo(ref embed, guild); break;
             case ChoiceServerInfo.Roles: this.GetRoleServerInfo(ref embed, guild); break;
             case ChoiceServerInfo.Subscription: embed.WithDescription("Not implemented, sorry"); break;
         }
@@ -38,7 +38,7 @@ public partial class GeneralModule
         await this.RespondAsync(embed: embed.Build());
     }
 
-    private void GetServerInfo(ref EmbedBuilder embed, SocketGuild guild, RestUser owner)
+    private void GetServerInfo(ref EmbedBuilder embed, SocketGuild guild)
     {
         embed
             .AddField("ID", guild.Id, true)
@@ -49,7 +49,7 @@ public partial class GeneralModule
                 $"Channels [{guild.Channels.Count}]",
                 $"Category: {guild.CategoryChannels.Count}\nText: {guild.TextChannels.Count}\nVoice: {guild.StageChannels.Count + guild.VoiceChannels.Count}",
                 true)
-            .AddField("Server Owner", $"{owner.Mention}", true)
+            .AddField("Server Owner", $"{_client.Rest.GetUserAsync(guild.OwnerId).GetAwaiter().GetResult().Mention}", true)
             .AddField("Created On", guild.CreatedAt.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"), true) 
             .AddField("Server Boost", $"Level: {guild.PremiumTier}\nBoost Count: {guild.PremiumSubscriptionCount}")
             .AddField("Roles", "Use `/serverinfo menu:Roles` for more information.")
