@@ -11,7 +11,14 @@ public partial class Program
 
     public Program()
     {
-        this._config = new DiscordSocketConfig { TotalShards = Global.Constant.TotalShards };
+        this._config = new DiscordSocketConfig {
+            TotalShards = Global.Constant.TotalShards,
+            GatewayIntents =
+                GatewayIntents.Guilds |
+                GatewayIntents.GuildVoiceStates |
+                GatewayIntents.GuildBans |
+                GatewayIntents.GuildEmojis
+        };
     }
 
     public async Task Run()
