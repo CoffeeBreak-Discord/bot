@@ -29,16 +29,17 @@ public partial class GeneralModule
         {
             // If data doesn't exists, initialize list
             List<string> cmdPrintList = new List<string>();
+            string key = cmd.Module.Name + (cmd.Module.IsSlashGroup ? "D" : null);
 
             // If data exists, import data from dictionary and delete it
-            if (cmdPrint.Where(x => x.Key == cmd.Module.Name).Count() > 0)
+            if (cmdPrint.Where(x => x.Key == key).Count() > 0)
             {
-                cmdPrintList = cmdPrint[cmd.Module.Name];
-                cmdPrint.Remove(cmd.Module.Name);
+                cmdPrintList = cmdPrint[key];
+                cmdPrint.Remove(key);
             }
 
             cmdPrintList.Add(cmd.Module.SlashGroupName == null ? cmd.Name : $"{cmd.Module.SlashGroupName} {cmd.Name}");
-            cmdPrint.Add(cmd.Module.Name + (cmd.Module.IsSlashGroup ? "D" : null), cmdPrintList);
+            cmdPrint.Add(key, cmdPrintList);
         }
 
         // Print to embed
