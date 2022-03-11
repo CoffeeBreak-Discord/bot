@@ -39,9 +39,7 @@ public class CachingGiveawayService
 
     private async Task FetchDatabaseAsync()
     {
-        // TODO: GUA GATAU INI GA KEAMBIL SIH RELASINYA ANJING
-        // Fix relational that didn't scrapped with EFC
-        var dataFetched = await _db.GiveawayRunning.Where(x => x.IsExpired == false).ToArrayAsync();
+        var dataFetched = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).Where(x => x.IsExpired == false).ToArrayAsync();
         if (dataFetched.Count() == 0) return;
         foreach (var data in dataFetched)
         {
