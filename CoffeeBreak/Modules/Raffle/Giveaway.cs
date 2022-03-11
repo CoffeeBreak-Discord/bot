@@ -170,7 +170,7 @@ public partial class RaffleModule
             ephemeral: true);
     }
 
-    private Embed GenerateEmbed(Models.GiveawayRunning data, SocketUser? winner = null)
+    private Embed GenerateEmbed(Models.GiveawayRunning data)
     {
         DateTimeOffset endTime = data.ExpiredDate;
         List<string> parseRole = new List<string>();
@@ -180,7 +180,8 @@ public partial class RaffleModule
             parseRole.Add($"Required: <@&{data.RequiredRole}>");
 
         var embed = new EmbedBuilder()
-            .WithTitle(winner == null ? "Giveaway Started!" : "Giveaway Ended!")
+            .WithTitle("Giveaway Started!")
+            .WithColor(Color.Green)
             .WithThumbnailUrl("https://media.discordapp.net/attachments/946050537814655046/948615258078085120/tada.png?width=400&height=394")
             .WithCurrentTimestamp()
             .WithFooter(data.MessageID.ToString(), _client.CurrentUser.GetAvatarUrl())
