@@ -60,8 +60,11 @@
 		"source=${localEnv:HOME}/.config/gh/hosts.yml,target=/home/vscode/.config/gh/hosts.yml,type=bind"
 	],
 
+	// Fix .config bind permissions
+	"onCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.config",
+
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
+	"postCreateCommand": "dotnet restore",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
