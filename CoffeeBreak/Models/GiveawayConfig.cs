@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Models;
-
 public class GiveawayConfig
 {
     public ulong ID { get; set; } = 0;

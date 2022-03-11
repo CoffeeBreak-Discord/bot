@@ -12,9 +12,10 @@ public class GiveawayRunning
     public string GiveawayName { get; set; } = null!;
     public string? GiveawayNote { get; set; }
     public DateTime ExpiredDate { get; set; }
-    [DatabaseGenerated(DatabaseGeneratedOption.Computed)] public bool IsExpired { get; set; } = false;
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public bool IsExpired { get; set; } = false;
     public int WinnerCount { get; set; } = 0;
     public ulong? RequiredRole { get; set; }
+    public virtual ICollection<GiveawayParticipant> GiveawayParticipant { get; set; } = default!;
 
     public static void Relations(ModelBuilder model)
     {

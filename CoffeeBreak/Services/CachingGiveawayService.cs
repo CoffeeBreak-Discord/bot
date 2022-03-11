@@ -1,4 +1,6 @@
+using CoffeeBreak.Function;
 using CoffeeBreak.ThirdParty;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,18 +41,30 @@ public class CachingGiveawayService
 
     private async Task FetchDatabaseAsync()
     {
-        var dataFetched = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).Where(x => x.IsExpired == false).ToArrayAsync();
+        // Get data that expired in this day
+        DateTime startDate = DateTime.Now;
+        DateTime endDate = DateTime.Now.AddDays(1);
+        var dataFetched = await _db.GiveawayRunning
+            .Include(m => m.GiveawayConfig)
+            .Where(x => x.IsExpired == false && (x.ExpiredDate >= startDate && x.ExpiredDate < endDate))
+            .ToArrayAsync();
         if (dataFetched.Count() == 0) return;
         foreach (var data in dataFetched)
         {
+            // If the giveaway more than State.Giveaway.MinuteInterval, skip
+            TimeSpan ts = data.ExpiredDate - DateTime.Now;
+            int minDiff = (int) Math.Floor(ts.TotalMinutes);
+            int interval = Global.State.Giveaway.MinuteInterval;
+            if (interval >= minDiff) continue;
+
+            // Insert to cache
             string key = $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}";
-            if (Global.State.Giveaway.GiveawayActive.Where(x => x.Key == key).Count() == 0)
-            {
-                Logging.Info($"Add {key} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
-                Global.State.Giveaway.GiveawayActive.Add(
-                    $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}",
-                    data.ExpiredDate);
-            }
+            if (Global.State.Giveaway.GiveawayActive.Where(x => x.Key == key).Count() > 0) continue;
+
+            Logging.Info($"Add {key} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
+            Global.State.Giveaway.GiveawayActive.Add(
+                $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}",
+                data.ExpiredDate);
         }
     }
 
@@ -87,6 +101,7 @@ public class CachingGiveawayService
             // If safe from anything, execute stop giveaway
             Logging.Info($"Stop giveaway for {guildID}:{channelID}[{messageID}].", "GAPool");
             Global.State.Giveaway.GiveawayActive.Remove(giveaway.Key);
+            await GiveawayManager.StopGiveawayAsync(guild, channel, message, _db);
         }
     }
 }

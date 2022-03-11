@@ -27,6 +27,7 @@ class Program
                     // Add migration list here
                     .ScanIn(typeof(_20220207_ClassicModeration).Assembly).For.Migrations()
                     .ScanIn(typeof(_20220302_Giveaway).Assembly).For.Migrations()
+                    .ScanIn(typeof(_20220311_GiveawayParticipant).Assembly).For.Migrations()
                 )
             .AddLogging(lb => lb.AddFluentMigratorConsole())
             .BuildServiceProvider(false);
