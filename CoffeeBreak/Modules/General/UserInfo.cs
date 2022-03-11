@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using CoffeeBreak.Function;
 
 namespace CoffeeBreak.Modules;
 public partial class GeneralModule
@@ -43,11 +44,11 @@ public partial class GeneralModule
             embed
                 .AddField("Nickname", guildUser.Nickname ?? "No nickname", true)
                 .AddField($"Roles [{guildUser.Roles.Count()}]", "To see user roles use `/userinfo user:<user> menu:Roles`")
-                .AddField("Join Date", guildUser.JoinedAt!.Value.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"));
+                .AddField("Join Date", new DiscordTimestamp(guildUser.JoinedAt!.Value).longDateTime());
         }
 
         embed
-            .AddField("Account Created", user.CreatedAt.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"))
+            .AddField("Account Created", new DiscordTimestamp(user.CreatedAt).longDateTime())
             .AddField("Subscription", "Coming soon!");
     }
 

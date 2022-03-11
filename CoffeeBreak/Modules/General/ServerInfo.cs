@@ -1,7 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Discord.Rest;
+using CoffeeBreak.Function;
 
 namespace CoffeeBreak.Modules;
 public partial class GeneralModule
@@ -50,7 +50,7 @@ public partial class GeneralModule
                 $"Category: {guild.CategoryChannels.Count}\nText: {guild.TextChannels.Count}\nVoice: {guild.StageChannels.Count + guild.VoiceChannels.Count}",
                 true)
             .AddField("Server Owner", $"{_client.Rest.GetUserAsync(guild.OwnerId).GetAwaiter().GetResult().Mention}", true)
-            .AddField("Created On", guild.CreatedAt.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"), true) 
+            .AddField("Created On", new DiscordTimestamp(guild.CreatedAt).longDateTime(), true)
             .AddField("Server Boost", $"Level: {guild.PremiumTier}\nBoost Count: {guild.PremiumSubscriptionCount}")
             .AddField("Roles", "Use `/serverinfo menu:Roles` for more information.")
             .AddField("Subscription", "Not implemented.");
