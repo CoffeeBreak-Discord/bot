@@ -1,6 +1,6 @@
 using Discord.WebSocket;
 
-namespace CoffeeBreak.ThirdParty.Discord;
+namespace CoffeeBreak.Function;
 public class RoleManager
 {
     ///<summary>Get the highest role from the user.</summary>

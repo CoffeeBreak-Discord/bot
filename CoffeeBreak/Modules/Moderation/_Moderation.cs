@@ -1,5 +1,5 @@
+using CoffeeBreak.Function;
 using CoffeeBreak.Services;
-using CoffeeBreak.ThirdParty.Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 
