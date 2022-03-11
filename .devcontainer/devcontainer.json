@@ -64,7 +64,7 @@
 	"onCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.config",
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet restore",
+	"postCreateCommand": "dotnet restore && docker compose up -d && dotnet run --project CoffeeBreak.Migrator --up",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
@@ -73,5 +73,7 @@
 		"git": "latest",
 		"git-lfs": "latest",
 		"github-cli": "latest"
-	}
+	},
+
+	"runArgs": ["--env-file",".env"]
 }
