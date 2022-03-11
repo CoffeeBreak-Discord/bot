@@ -29,16 +29,17 @@ public partial class GeneralModule
         {
             // If data doesn't exists, initialize list
             List<string> cmdPrintList = new List<string>();
+            string key = cmd.Module.Name + (cmd.Module.IsSlashGroup ? "D" : null);
 
             // If data exists, import data from dictionary and delete it
-            if (cmdPrint.Where(x => x.Key == cmd.Module.Name).Count() > 0)
+            if (cmdPrint.Where(x => x.Key == key).Count() > 0)
             {
-                cmdPrintList = cmdPrint[cmd.Module.Name];
-                cmdPrint.Remove(cmd.Module.Name);
+                cmdPrintList = cmdPrint[key];
+                cmdPrint.Remove(key);
             }
 
             cmdPrintList.Add(cmd.Module.SlashGroupName == null ? cmd.Name : $"{cmd.Module.SlashGroupName} {cmd.Name}");
-            cmdPrint.Add(cmd.Module.Name, cmdPrintList);
+            cmdPrint.Add(key, cmdPrintList);
         }
 
         // Print to embed
@@ -47,7 +48,10 @@ public partial class GeneralModule
             // Add space into PascalCase, split it, and remove "Module"
             // ref: https://stackoverflow.com/a/3103795
             string[] oldKey = new Regex(@"(?!^)(?=[A-Z])").Replace(cmd.Key, " ").Split(" ");
-            string newKey = string.Join(" ", oldKey.Take(oldKey.Count() - 1));
+            bool ifDerivative = oldKey[oldKey.Length - 1] == "D";
+            string newKey = string.Join(" ", oldKey.Take(oldKey.Count() - (ifDerivative ? 2 : 1)));
+            // If the command is derivative command/nested
+            newKey += ifDerivative ? " [Derivative]" : null;
             embed
                 .AddField(newKey, $"`{string.Join("`, `", cmd.Value.ToArray())}`", true)
                 .WithDescription("Type `/help <command>` to get more info on a specific command.")
