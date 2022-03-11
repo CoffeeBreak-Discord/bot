@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace CoffeeBreak.ThirdParty.Discord;
+namespace CoffeeBreak.ThirdParty;
 public class HumanizeDuration
 {
     public DateTimeOffset time = new DateTimeOffset(DateTime.Now);
