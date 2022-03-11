@@ -69,7 +69,7 @@
 	"postCreateCommand": "dotnet restore",
 
 	// Start required services for development
-	"postStartCommand": "docker compose up -d && sleep 5",
+	"postStartCommand": "docker compose pull && docker compose up -d && sleep 5 && docker image prune -a -f",
 
 	// Run Migrator
 	"postAttachCommand": "dotnet run --project CoffeeBreak.Migrator --up",
