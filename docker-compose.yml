@@ -1,42 +1,18 @@
-networks:
-  internet:
-    ipam:
-      driver: default
-      config:
-        - subnet: "172.22.0.0/16"
-  private:
-    ipam:
-      driver: default
-      config:
-        - subnet: "172.20.0.0/16"
-    internal: true
+# NOTE: This docker-compose file is intended for development use.
+# It is used to run required services for CoffeeBreak-Discord/bot to run
 services:
   mariadb:
     image: mariadb:latest
+    container_name: coffeebreak-development-mariadb
     env_file:
       - .mariadb.env
-    networks:
-      private:
-        ipv4_address: 172.20.0.2
-        aliases:
-          - mariadb.private
-      internet:
-        aliases:
-          - mariadb.internet
     ports:
       - "3306:3306"
     volumes:
       - "./.devel-data/mariadb/data:/var/lib/mysql"
   redis:
     image: redis:latest
-    networks:
-      private:
-        ipv4_address: 172.20.0.3
-        aliases:
-          - redis.private
-      internet:
-        aliases:
-          - redis.internet
+    container_name: coffeebreak-development-redis
     ports:
       - "6379:6379"
     volumes:
