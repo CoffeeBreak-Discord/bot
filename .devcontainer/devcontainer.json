@@ -18,7 +18,18 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-dotnettools.csharp"
+		"ms-dotnettools.csharp",
+		"VisualStudioExptTeam.vscodeintellicode",
+		"ms-vsliveshare.vsliveshare-pack",
+		"lostintangent.vsls-whiteboard",
+		"GitHub.vscode-pull-request-github",
+		"ms-azuretools.vscode-docker",
+		"mkxml.vscode-filesize",
+		"sleistner.vscode-fileutils",
+		"Gruntfuggly.todo-tree",
+		"shardulm94.trailing-spaces",
+		"mutantdino.resourcemonitor",
+		"eamodio.gitlens"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
