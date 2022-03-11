@@ -60,11 +60,19 @@
 		"source=${localEnv:HOME}/.config/gh/hosts.yml,target=/home/vscode/.config/gh/hosts.yml,type=bind"
 	],
 
+	"initializeCommand": "git fetch",
+
 	// Fix .config bind permissions
 	"onCreateCommand": "sudo chown -R vscode:vscode /home/vscode/.config",
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "dotnet restore && docker compose up -d && dotnet run --project CoffeeBreak.Migrator --up",
+	// Restore dotnet dependencies
+	"postCreateCommand": "dotnet restore",
+
+	// Start required services for development
+	"postStartCommand": "docker compose up -d && sleep 5",
+
+	// Run Migrator
+	"postAttachCommand": "dotnet run --project CoffeeBreak.Migrator --up",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
