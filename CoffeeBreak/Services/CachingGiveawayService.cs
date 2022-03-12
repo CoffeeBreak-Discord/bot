@@ -82,6 +82,7 @@ public class CachingGiveawayService
             var guild = _client.GetGuild(guildID);
             if (guild == null) continue;
             var channel = guild.GetChannel(channelID) as SocketTextChannel;
+            // TODO: If channel is null, delete all data based on channel
             if (channel == null) continue;
 
             // Check diff before get message because we afraid discord

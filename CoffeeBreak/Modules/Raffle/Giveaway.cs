@@ -74,6 +74,48 @@ public partial class RaffleModule
             await _db.SaveChangesAsync();
             await this.RespondAsync($"<#{this.Context.Channel.Id}> successfully set as Giveaway Channel.");
         }
+
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        [SlashCommand("stop", "Stop the giveaway and roll the winner")]
+        public async Task Stop(
+            [Summary(description: "Giveaway ID - You can peek the ID from the bottom of giveaway")] ulong id)
+            => await this.StopCancelAsync(id);
+
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        [SlashCommand("cancel", "Cancel the giveaway")]
+        public async Task Cancel(
+            [Summary(description: "Giveaway ID - You can peek the ID from the bottom of giveaway")] ulong id)
+            => await this.StopCancelAsync(id, true);
+
+        private async Task StopCancelAsync(ulong id, bool isCanceled = false)
+        {
+            var data = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).FirstOrDefaultAsync(x => x.ID == id);
+            bool isAdmin = this.Context.Guild.GetUser(this.Context.User.Id).Roles.Where(x => x.Permissions.Has(GuildPermission.Administrator)).Count() > 0;
+            if (data == null)
+            {
+                await this.RespondAsync("ID not found. Please try again.", ephemeral: true);
+                return;
+            }
+            if (this.Context.Guild.Id != data.GiveawayConfig.GuildID)
+            {
+                await this.RespondAsync("ID not found in this server. Please try again.", ephemeral: true);
+                return;
+            }
+            if (!isAdmin && this.Context.User.Id != data.UserID)
+            {
+                await this.RespondAsync("You cannot cancel that giveaway because you're not the creator or guild administrator", ephemeral: true);
+                return;
+            }
+
+            SocketTextChannel? channel = this.Context.Guild.GetTextChannel(data.GiveawayConfig.ChannelID);
+            if (channel == null) return;
+            var message = await channel.GetMessageAsync(data.MessageID);
+            if (message == null) return;
+
+            Global.State.Giveaway.GiveawayActive.Remove($"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}");
+            await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db, isCanceled);
+            await this.RespondAsync("Giveaway successfully " + (isCanceled ? "canceled!" : "stopped!"), ephemeral: true);
+        }
     }
 
     // If user spawning giveaway, first of all user will teleport to
