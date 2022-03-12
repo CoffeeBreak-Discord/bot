@@ -1,6 +1,6 @@
+using CoffeeBreak.Function;
 using CoffeeBreak.Services;
 using CoffeeBreak.ThirdParty;
-using CoffeeBreak.ThirdParty.Discord;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -18,6 +18,7 @@ public partial class RaffleModule
             _db = db;
         }
 
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         [SlashCommand("start", "Start the giveaway.")]
         public async Task Start()
         {
@@ -43,6 +44,7 @@ public partial class RaffleModule
                 ephemeral: true);
         }
 
+        [RequireUserPermission(GuildPermission.ManageGuild)]
         [SlashCommand("channel", "Set channel giveaway")]
         public async Task Channel(
             [ChannelTypes(ChannelType.Text)][Summary(description: "Channel target for giveaway")]
@@ -82,7 +84,7 @@ public partial class RaffleModule
         string menu = selectedMenu[0];
         if (menu == "role_none")
         {
-            await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>("modal_giveaway:none;0");
+            await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>("modal_giveaway:none;0");
             return;
         }
 
@@ -103,10 +105,10 @@ public partial class RaffleModule
     // to this interaction
     [ComponentInteraction("select_menu_giveaway_role")]
     public async Task GiveawaySelectVerifiedRequiredRoleResponse(string[] selectedMenu)
-        => await this.Context.Interaction.RespondWithModalAsync<GiveawayModal>($"modal_giveaway:required;{selectedMenu[0] ?? "0"}");
+        => await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>($"modal_giveaway:required;{selectedMenu[0] ?? "0"}");
 
     [ModalInteraction("modal_giveaway:*;*")]
-    public async Task GiveawayModalResponse(string mode, string roleID, GiveawayModal modal)
+    public async Task GiveawayModalResponse(string mode, string roleID, GiveawayManager.GiveawayModal modal)
     {
         Models.GiveawayRunning data = new Models.GiveawayRunning();
         data.GiveawayName = modal.GiveawayName;
@@ -114,6 +116,12 @@ public partial class RaffleModule
         data.UserID = this.Context.User.Id;
         data.WinnerCount = int.Parse(modal.Winner);
         data.ExpiredDate = new HumanizeDuration(modal.Duration).ToDateTime();
+
+        // If expired date < 5 seconds, increase to 30 seconds.
+        // We need time to make sure database is completed before expiration.
+        // And u know, "human thingy"
+        TimeSpan expDiff = data.ExpiredDate - DateTime.Now;
+        if (Math.Floor(expDiff.TotalSeconds) < 5) data.ExpiredDate = new HumanizeDuration("30s").ToDateTime();
 
         // Parse mode except for none
         if (mode == "required")
@@ -147,7 +155,7 @@ public partial class RaffleModule
         await message.ModifyAsync(Message =>
         {
             Message.Components = comp;
-            Message.Embed = this.GenerateEmbed(data);
+            Message.Embed = GiveawayManager.GenerateEmbed(data, _client);
             Message.Content = null;
         });
 
@@ -191,6 +199,22 @@ public partial class RaffleModule
             return;
         }
 
+        // Check if giveaway REQUIRED_ROLE
+        // Special cast for checking numeric data type
+        if (data.RequiredRole is ulong roleID)
+        {
+            SocketGuildUser? user = this.Context.Guild.GetUser(this.Context.User.Id);
+            bool isAdmin = user.Roles.Where(x => x.Permissions.Has(GuildPermission.Administrator)).Count() > 0;
+            bool isHaveRole = user.Roles.Where(x => x.Id == roleID).Count() > 0;
+            if (!isHaveRole && !isAdmin)
+            {
+                await this.RespondAsync(
+                    "Something error when joining the giveaway:\n```You didn't meet requirement: No required role exist.```",
+                    ephemeral: true);
+                return;
+            }
+        }
+
         // Fetch channel and message
         var channel = this.Context.Guild.GetTextChannel(data.GiveawayConfig.ChannelID);
         if (channel == null) return;
@@ -230,52 +254,5 @@ public partial class RaffleModule
         await this.RespondAsync(
             isParticipated ? $"You participated to **{embed.Description}** giveaway." : $"You cancelled participation to **{embed.Description}** giveaway.",
             ephemeral: true);
-    }
-
-    private Embed GenerateEmbed(Models.GiveawayRunning data)
-    {
-        DateTimeOffset endTime = data.ExpiredDate;
-        List<string> parseRole = new List<string>();
-
-        // If required role is available
-        if (data.RequiredRole != null)
-            parseRole.Add($"Required: <@&{data.RequiredRole}>");
-
-        var embed = new EmbedBuilder()
-            .WithTitle("Giveaway Started!")
-            .WithColor(Color.Green)
-            .WithThumbnailUrl("https://media.discordapp.net/attachments/946050537814655046/948615258078085120/tada.png?width=400&height=394")
-            .WithCurrentTimestamp()
-            .WithFooter(data.MessageID.ToString(), _client.CurrentUser.GetAvatarUrl())
-            .WithDescription(data.GiveawayName)
-            .AddField("Note", data.GiveawayNote)
-            .AddField("Creator", $"<@!{data.UserID}>", true)
-            .AddField("Role", parseRole.Count() == 0 ? "No minimum/required role." : string.Join("\n", parseRole.ToArray()), true)
-            .AddField("End Date", $"<t:{endTime.ToUnixTimeSeconds()}:F> which is <t:{endTime.ToUnixTimeSeconds()}:R> from now")
-            .AddField("Entries/Winner", $"0 people / {data.WinnerCount} winner", true);
-        return embed.Build();
-    }
-
-    public class GiveawayModal : IModal
-    {
-        public string Title => "Make a Giveaway!";
-
-        [InputLabel("Insert your giveaway name")]
-        [ModalTextInput("giveaway_name", placeholder: "Ex: Free nitro 1 month.")]
-        public string GiveawayName { get; set; } = default!;
-
-        [InputLabel("How long this giveaway?")]
-        [ModalTextInput("giveaway_duration", placeholder: "Ex: 3d 4h 5m 10s")]
-        public string Duration { get; set; } = default!;
-
-        [InputLabel("How much winner?")]
-        [ModalTextInput("giveaway_winner_count", placeholder: "Ex: 1", initValue: "1", maxLength: 3)]
-        public string Winner { get; set; } = default!;
-
-        [InputLabel("Some note?")]
-        [ModalTextInput(
-            "giveaway_note", TextInputStyle.Paragraph,
-            "Spill some note for this giveaway.", 1, 255)]
-        public string Note { get; set; } = default!;
     }
 }
