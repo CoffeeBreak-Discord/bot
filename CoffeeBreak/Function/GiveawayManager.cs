@@ -33,7 +33,7 @@ public class GiveawayManager
 
     public static Embed GenerateEmbed(GiveawayRunning data, DiscordShardedClient client)
     {
-        DateTimeOffset endTime = data.ExpiredDate;
+        DiscordTimestamp endTime = new DiscordTimestamp(data.ExpiredDate);
         List<string> parseRole = new List<string>();
 
         // If required role is available
@@ -50,7 +50,7 @@ public class GiveawayManager
             .AddField("Note", data.GiveawayNote)
             .AddField("Creator", $"<@!{data.UserID}>", true)
             .AddField("Role", parseRole.Count() == 0 ? "No minimum/required role." : string.Join("\n", parseRole.ToArray()), true)
-            .AddField("End Date", $"<t:{endTime.ToUnixTimeSeconds()}:F> which is <t:{endTime.ToUnixTimeSeconds()}:R> from now")
+            .AddField("End Date", $"${endTime.longDateTime()} (${endTime.relative()})")
             .AddField("Entries/Winner", $"0 people / {data.WinnerCount} winner", true);
         return embed.Build();
     }
