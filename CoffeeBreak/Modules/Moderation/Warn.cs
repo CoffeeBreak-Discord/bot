@@ -16,7 +16,7 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
@@ -45,7 +45,7 @@ public partial class ModerationModule
             Reason = reason
         });
         await _db.SaveChangesAsync();
-        await this.RespondAsync($"{guildUser.Mention} successfully warned with reason:\n```{reason ?? "No reason"}```");
+        await this.RespondAsync($"{guildUser.Mention} was successfully warned with reason:\n```{reason ?? "No reason"}```");
     }
 
     [SlashCommand("warnlist", "Get warn list from specified user")]
@@ -57,7 +57,7 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
