@@ -40,6 +40,7 @@ public partial class GeneralModule
 
     private void GetServerInfo(ref EmbedBuilder embed, SocketGuild guild)
     {
+        DiscordTimestamp createdTimestamp = new DiscordTimestamp(guild.CreatedAt);
         embed
             .AddField("ID", guild.Id, true)
             .AddField("Verification Level", guild.VerificationLevel.ToString(), true)
@@ -50,7 +51,7 @@ public partial class GeneralModule
                 $"Category: {guild.CategoryChannels.Count}\nText: {guild.TextChannels.Count}\nVoice: {guild.StageChannels.Count + guild.VoiceChannels.Count}",
                 true)
             .AddField("Server Owner", $"{_client.Rest.GetUserAsync(guild.OwnerId).GetAwaiter().GetResult().Mention}", true)
-            .AddField("Created On", new DiscordTimestamp(guild.CreatedAt).longDateTime(), true)
+            .AddField("Created", $"{createdTimestamp.longDateTime()} ({createdTimestamp.relative()})", true)
             .AddField("Server Boost", $"Level: {guild.PremiumTier}\nBoost Count: {guild.PremiumSubscriptionCount}")
             .AddField("Roles", "Use `/serverinfo menu:Roles` for more information.")
             .AddField("Subscription", "Not implemented.");
