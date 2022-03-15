@@ -1,6 +1,7 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using CoffeeBreak.Function;
 
 namespace CoffeeBreak.Modules;
 public partial class GeneralModule
@@ -36,6 +37,8 @@ public partial class GeneralModule
     private void GetNormalUserInfo(ref EmbedBuilder embed, IUser user)
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
+        DiscordTimestamp createdAt = new DiscordTimestamp(user.CreatedAt);
+        DiscordTimestamp joinedAt = new DiscordTimestamp(guildUser.JoinedAt!.Value);
         embed.AddField("ID", user.Id, true);
 
         if (guildUser != null)
@@ -43,11 +46,11 @@ public partial class GeneralModule
             embed
                 .AddField("Nickname", guildUser.Nickname ?? "No nickname", true)
                 .AddField($"Roles [{guildUser.Roles.Count()}]", "To see user roles use `/userinfo user:<user> menu:Roles`")
-                .AddField("Join Date", guildUser.JoinedAt!.Value.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"));
+                .AddField("Join Date", $"{joinedAt.longDateTime()} ({joinedAt.relative()})");
         }
 
         embed
-            .AddField("Account Created", user.CreatedAt.ToString("dddd, dd MMMM yyyy HH:mm tt zzz"))
+            .AddField("Account Created", $"{createdAt.longDateTime()} ({createdAt.relative})")
             .AddField("Subscription", "Coming soon!");
     }
 

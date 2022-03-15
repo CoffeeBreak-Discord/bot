@@ -2,6 +2,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using CoffeeBreak.Function;
 
 namespace CoffeeBreak.Modules;
 public partial class ModerationModule
@@ -16,7 +17,7 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
@@ -45,7 +46,7 @@ public partial class ModerationModule
             Reason = reason
         });
         await _db.SaveChangesAsync();
-        await this.RespondAsync($"{guildUser.Mention} successfully warned with reason:\n```{reason ?? "No reason"}```");
+        await this.RespondAsync($"{guildUser.Mention} was successfully warned with reason:\n```{reason ?? "No reason"}```");
     }
 
     [SlashCommand("warnlist", "Get warn list from specified user")]
@@ -57,7 +58,7 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
@@ -76,7 +77,15 @@ public partial class ModerationModule
             return;
         }
 
-        var map = data.Select((x, i) => $"{i}. {this.Context.Guild.GetUser(x.ExecutorID)}: {x.Reason} [{x.Timestamp}]");
-        await this.RespondAsync($"Warn list for {guildUser}:\n{string.Join("\n", map)}");
+        var map = data
+            .Select((x) => $"{x.ID}. {x.Reason} [{new DiscordTimestamp(x.Timestamp).longDateTime()}] by {this.Context.Guild.GetUser(x.ExecutorID).Mention}");
+        EmbedBuilder embed = new EmbedBuilder()
+            .WithAuthor(name: $"Warn list for {guildUser}", iconUrl: this.Context.Guild.IconUrl)
+            .WithThumbnailUrl(guildUser.GetDisplayAvatarUrl())
+            .WithCurrentTimestamp()
+            .WithColor(Global.BotColors.Randomize().IntCode)
+            .WithDescription(string.Join("\n", map))
+            .WithFooter($"Requested by {this.Context.User}");
+        await this.RespondAsync(embed: embed.Build());
     }
 }
