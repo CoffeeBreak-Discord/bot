@@ -16,7 +16,7 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
@@ -38,7 +38,7 @@ public partial class ModerationModule
         }
 
         await guildUser.BanAsync(reason: reason);
-        await this.RespondAsync($"{guildUser} successfully banned with reason:\n```{reason ?? "No reason"}```");
+        await this.RespondAsync($"Successfully banned {guildUser} with reason:\n```{reason ?? "No reason"}```");
     }
 
 
@@ -46,16 +46,16 @@ public partial class ModerationModule
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("unban", "Ban user")]
     public async Task Unban(
-        [Summary(description: "Snowflake ID of user")] string userID)
+        [Summary(description: "Snowflake ID of the user")] string userID)
     {
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only using this module in Guild/Server.");
+            await this.RespondAsync("You can only use this module in a Guild/Server.");
             return;
         }
 
         await this.Context.Guild.RemoveBanAsync(ulong.Parse(userID));
-        await this.RespondAsync($"{userID} successfully unbanned!");
+        await this.RespondAsync($"{userID} was successfully unbanned");
     }
 }
