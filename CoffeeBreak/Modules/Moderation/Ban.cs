@@ -44,7 +44,7 @@ public partial class ModerationModule
 
     [RequireBotPermission(GuildPermission.BanMembers)]
     [RequireUserPermission(GuildPermission.BanMembers)]
-    [SlashCommand("unban", "Ban user")]
+    [SlashCommand("unban", "Unban user")]
     public async Task Unban(
         [Summary(description: "Snowflake ID of the user")] string userID)
     {
