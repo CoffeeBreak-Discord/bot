@@ -57,18 +57,24 @@ public class GiveawayManager
 
     public static async Task StopGiveawayAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseService db, bool isCanceled = false)
     {
+        // Load data
         var data = await db.GiveawayRunning
             .Include(m => m.GiveawayConfig)
             .Where(x => x.GiveawayConfig.GuildID == guild.Id && x.GiveawayConfig.ChannelID == channel.Id && x.MessageID == message.Id)
             .FirstOrDefaultAsync();
-        var participant = await db.GiveawayParticipant.Where(x => x.GiveawayRunning == data).ToArrayAsync();
-        ulong winner = participant.Count() > 0 ? participant[new Random().Next(participant.Count())].UserID : 0;
+
+        // Load participant and get giveaway winner
+        var participant = data!.GiveawayParticipant;
+        ulong winner = participant != null && participant.Count() > 0 ? participant.ToArray()[new Random().Next(participant.Count())].UserID : 0;
         var embed = GiveawayManager.StopGiveawayEmbed((message.Embeds.First() as Embed).ToEmbedBuilder(), winner, isCanceled);
 
+        var button = new ComponentBuilder()
+            .WithButton("Reroll! 🔂", $"button_giveaway_reroll:{data!.ID}", ButtonStyle.Danger)
+            .Build();
         var msgModifed = await channel.ModifyMessageAsync(message.Id, Message => 
         {
             Message.Embed = embed;
-            Message.Components = null;
+            Message.Components = isCanceled || winner == 0 ? null : button;
         });
 
         if (isCanceled)
@@ -86,13 +92,15 @@ public class GiveawayManager
 
         data.IsExpired = true;
         db.GiveawayRunning.Update(data);
-        db.GiveawayParticipant.RemoveRange(participant);
         await db.SaveChangesAsync();
     }
 
     public static Embed StopGiveawayEmbed(EmbedBuilder embed, ulong winner, bool isCanceled = false)
     {
         embed.WithTitle("Giveaway Ended!").WithColor(Color.Red);
+
+        var winnerEmbed = embed.Fields.Where(x => x.Name == "Winner");
+        if (winnerEmbed.Count() > 0) embed.Fields.Remove(winnerEmbed.First());
         if (winner == 0) embed.AddField("Winner", $"No winner{(isCanceled ? " (Canceled)" : "")}", true);
         else embed.AddField("Winner", $"<@!{winner}>", true);
 
