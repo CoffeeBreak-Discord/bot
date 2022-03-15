@@ -37,6 +37,8 @@ public partial class GeneralModule
     private void GetNormalUserInfo(ref EmbedBuilder embed, IUser user)
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
+        DiscordTimestamp createdAt = new DiscordTimestamp(user.CreatedAt);
+        DiscordTimestamp joinedAt = new DiscordTimestamp(guildUser.JoinedAt!.Value);
         embed.AddField("ID", user.Id, true);
 
         if (guildUser != null)
@@ -44,11 +46,11 @@ public partial class GeneralModule
             embed
                 .AddField("Nickname", guildUser.Nickname ?? "No nickname", true)
                 .AddField($"Roles [{guildUser.Roles.Count()}]", "To see user roles use `/userinfo user:<user> menu:Roles`")
-                .AddField("Join Date", new DiscordTimestamp(guildUser.JoinedAt!.Value).longDateTime());
+                .AddField("Join Date", $"{joinedAt.longDateTime()} ({joinedAt.relative()})");
         }
 
         embed
-            .AddField("Account Created", new DiscordTimestamp(user.CreatedAt).longDateTime())
+            .AddField("Account Created", $"{createdAt.longDateTime()} ({createdAt.relative})")
             .AddField("Subscription", "Coming soon!");
     }
 
