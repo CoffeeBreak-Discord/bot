@@ -57,7 +57,9 @@
 	//
 	//    * If only using Remote - Containers with a local container, uncomment this line instead:
 	"mounts": [
-		"source=${localEnv:HOME}/.config/gh/hosts.yml,target=/home/vscode/.config/gh/hosts.yml,type=bind"
+		"source=${localEnv:HOME}/.config/gh/hosts.yml,target=/home/vscode/.config/gh/hosts.yml,type=bind",
+		"source=${localEnv:HOME}/.docker,target=/home/vscode/.docker,type=bind",
+		"source=${localEnv:HOME}/.password-store/docker-credential-helpers,target=/home/vscode/.password-store/docker-credential-helpers,type=bind"
 	],
 
 	"initializeCommand": "git fetch",
