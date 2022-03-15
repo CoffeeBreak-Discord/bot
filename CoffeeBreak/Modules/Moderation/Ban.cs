@@ -9,8 +9,8 @@ public partial class ModerationModule
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("ban", "Ban user")]
     public async Task Ban(
-        [Summary(description: "Person who want to banned")] IUser user,
-        [Summary(description: "Reason why be banned")] string reason = "No reason")
+        [Summary(description: "Target user")] IUser user,
+        [Summary(description: "Reason")] string reason = "No reason")
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);
         // Check if command is executed in guild
