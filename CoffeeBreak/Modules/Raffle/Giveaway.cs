@@ -13,9 +13,11 @@ public partial class RaffleModule
     public class GiveawayCommand : InteractionModuleBase<ShardedInteractionContext>
     {
         private DatabaseService _db;
-        public GiveawayCommand(DatabaseService db)
+        private DiscordShardedClient _client;
+        public GiveawayCommand(DatabaseService db, DiscordShardedClient client)
         {
             _db = db;
+            _client = client;
         }
 
         [RequireUserPermission(GuildPermission.ManageGuild)]
@@ -57,6 +59,17 @@ public partial class RaffleModule
                 return;
             }
 
+            // Check if giveaway is running
+            var gaList = await _db.GiveawayRunning.Include(m => m.GiveawayConfig)
+                .Where(x => x.GiveawayConfig.GuildID == this.Context.Guild.Id && x.IsExpired == false).ToArrayAsync();
+            if (gaList.Count() > 0)
+            {
+                await this.RespondAsync(
+                    $"Please wait or stop all the giveaway running in the <#{gaList.First().GiveawayConfig.ChannelID}> before executing this command.",
+                    ephemeral: true);
+                return;
+            }
+
             var entity = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
             if (entity != null)
             {
@@ -87,6 +100,61 @@ public partial class RaffleModule
             [Summary(description: "Giveaway ID - You can peek the ID from the bottom of giveaway")] ulong id)
             => await this.StopCancelAsync(id, true);
 
+        [RequireUserPermission(GuildPermission.ManageGuild)]
+        [SlashCommand("edit", "Edit the giveaway")]
+        public async Task Edit(
+            [Summary(description: "Giveaway ID")] ulong id,
+            [Summary(description: "Giveaway name")] string? giveawayName = null,
+            [Summary(description: "Giveaway note")] string? giveawayNote = null,
+            [Summary(description: "Winner count")] int winnerCount = 0)
+        {
+            var data = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).FirstOrDefaultAsync(x => x.ID == id);
+            bool isAdmin = this.Context.Guild.GetUser(this.Context.User.Id).Roles.Where(x => x.Permissions.Has(GuildPermission.Administrator)).Count() > 0;
+            if (data == null)
+            {
+                await this.RespondAsync("ID not found. Please try again.", ephemeral: true);
+                return;
+            }
+            if (this.Context.Guild.Id != data.GiveawayConfig.GuildID)
+            {
+                await this.RespondAsync("ID not found in this server. Please try again.", ephemeral: true);
+                return;
+            }
+            if (!isAdmin && this.Context.User.Id != data.UserID)
+            {
+                await this.RespondAsync("You cannot modify that giveaway because you're not the creator or guild administrator", ephemeral: true);
+                return;
+            }
+
+            if
+            (
+                // Set if to tabbed because we don't know next update the props will added
+                giveawayName == null && giveawayNote == null
+                && winnerCount == 0
+            )
+            {
+                await this.RespondAsync("Please complete your command.", ephemeral: true);
+                return;
+            }
+
+            // Modify to database
+            if (giveawayName != null) data.GiveawayName = giveawayName;
+            if (giveawayNote != null) data.GiveawayNote = giveawayNote;
+            if (winnerCount != 0) data.WinnerCount = winnerCount;
+            await _db.SaveChangesAsync();
+
+            // Modify message
+            var channel = this.Context.Guild.GetChannel(data.GiveawayConfig.ChannelID) as SocketTextChannel;
+            if (channel == null)
+            {
+                await this.RespondAsync("Channel not found, please try again.", ephemeral: true);
+                return;
+            }
+            await channel.ModifyMessageAsync(data.MessageID, Message => Message.Embed = GiveawayManager.GenerateEmbed(data, _client));
+
+            await this.RespondAsync("Giveaway has been modified!", ephemeral: true);
+        }
+        
         private async Task StopCancelAsync(ulong id, bool isCanceled = false)
         {
             var data = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).FirstOrDefaultAsync(x => x.ID == id);

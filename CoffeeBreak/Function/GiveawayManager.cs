@@ -64,8 +64,15 @@ public class GiveawayManager
             .FirstOrDefaultAsync();
 
         // Load participant and get giveaway winner
-        var participant = data!.GiveawayParticipant;
-        ulong winner = participant != null && participant.Count() > 0 ? participant.ToArray()[new Random().Next(participant.Count())].UserID : 0;
+        ICollection<GiveawayParticipant> participant = data!.GiveawayParticipant;
+        List<ulong> listWinner = new List<ulong>();
+        for (int i = 0; i < data.WinnerCount; i++)
+        {
+            if (participant == null || participant.Count() == 0) continue;
+            if (data.WinnerCount > participant.Count()) continue;
+            listWinner.Add(participant.ToArray()[new Random().Next(participant.Count)].UserID);
+        }
+        ulong[] winner = listWinner.ToArray();
         var embed = GiveawayManager.StopGiveawayEmbed((message.Embeds.First() as Embed).ToEmbedBuilder(), winner, isCanceled);
 
         var button = new ComponentBuilder()
@@ -74,20 +81,20 @@ public class GiveawayManager
         var msgModifed = await channel.ModifyMessageAsync(message.Id, Message => 
         {
             Message.Embed = embed;
-            Message.Components = isCanceled || winner == 0 ? null : button;
+            Message.Components = isCanceled || winner.Count() == 0 ? null : button;
         });
 
         if (isCanceled)
             await channel.SendMessageAsync(
                 $"The giveaway is cancelled because action from giveaway creator.\nPlease ask <@!{data!.UserID}> for more information.",
                 messageReference: new MessageReference(message.Id, channel.Id, guild.Id));
-        else if (winner == 0)
+        else if (winner.Count() == 0)
             await channel.SendMessageAsync(
-                $"No winner for this time because no one participating in this giveaway.\nPlease ask <@!{data!.UserID}> for more information.",
+                $"No winner for this time because no one participating or insufficient winner in this giveaway.\nPlease ask <@!{data!.UserID}> for more information.",
                 messageReference: new MessageReference(message.Id, channel.Id, guild.Id));
         else
             await channel.SendMessageAsync(
-                $"The winner of **{embed.Description}** is <@!{winner}>, congratulations!\nPlease ask <@!{data!.UserID}> for more information.",
+                $"The winner of **{embed.Description}** is <@!{string.Join(">, <@!", winner)}>, congratulations!\nPlease ask <@!{data!.UserID}> for more information.",
                 messageReference: new MessageReference(message.Id, channel.Id, guild.Id));
 
         data.IsExpired = true;
@@ -95,14 +102,14 @@ public class GiveawayManager
         await db.SaveChangesAsync();
     }
 
-    public static Embed StopGiveawayEmbed(EmbedBuilder embed, ulong winner, bool isCanceled = false)
+    public static Embed StopGiveawayEmbed(EmbedBuilder embed, ulong[] winner, bool isCanceled = false)
     {
         embed.WithTitle("Giveaway Ended!").WithColor(Color.Red);
 
         var winnerEmbed = embed.Fields.Where(x => x.Name == "Winner");
         if (winnerEmbed.Count() > 0) embed.Fields.Remove(winnerEmbed.First());
-        if (winner == 0) embed.AddField("Winner", $"No winner{(isCanceled ? " (Canceled)" : "")}", true);
-        else embed.AddField("Winner", $"<@!{winner}>", true);
+        if (winner.Count() == 0) embed.AddField("Winner", $"No winner{(isCanceled ? " (Canceled)" : "")}", true);
+        else embed.AddField("Winner", $"<@!{string.Join(">, <@!", winner)}>", true);
 
         return embed.Build();
     }

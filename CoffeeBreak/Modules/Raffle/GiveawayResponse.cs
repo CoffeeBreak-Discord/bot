@@ -106,7 +106,7 @@ public partial class RaffleModule
 
         await this.RespondAsync(
             $"Giveaway successfully created! Check <#{data.GiveawayConfig.ChannelID}> to see your giveaway.\n"
-            + $"If you want to edit some giveaway, you can use `/giveaway modify id:{data.MessageID} [param]`.",
+            + $"If you want to edit some giveaway, you can use `/giveaway modify id:{data.ID} [param]`.",
             ephemeral: true);
     }
 
