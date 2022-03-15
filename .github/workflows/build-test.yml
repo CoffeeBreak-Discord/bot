@@ -30,8 +30,4 @@ jobs:
       - name: Build project
         run: dotnet build --no-restore
       - name: Test
-<<<<<<< HEAD
-        run: dotnet test --no-build --verbosity normal
-=======
         run: dotnet test --no-build --verbosity detailed
->>>>>>> cf79aa6 (ci(build-test): Fix test step)
