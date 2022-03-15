@@ -50,7 +50,7 @@ public class GiveawayManager
             .AddField("Note", data.GiveawayNote)
             .AddField("Creator", $"<@!{data.UserID}>", true)
             .AddField("Role", parseRole.Count() == 0 ? "No minimum/required role." : string.Join("\n", parseRole.ToArray()), true)
-            .AddField("End Date", $"${endTime.longDateTime()} (${endTime.relative()})")
+            .AddField("End Date", $"{endTime.longDateTime()} ({endTime.relative()})")
             .AddField("Entries/Winner", $"0 people / {data.WinnerCount} winner", true);
         return embed.Build();
     }
