@@ -2,6 +2,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using CoffeeBreak.Function;
 
 namespace CoffeeBreak.Modules;
 public partial class ModerationModule
@@ -76,7 +77,15 @@ public partial class ModerationModule
             return;
         }
 
-        var map = data.Select((x, i) => $"{i}. {this.Context.Guild.GetUser(x.ExecutorID)}: {x.Reason} [{x.Timestamp}]");
-        await this.RespondAsync($"Warn list for {guildUser}:\n{string.Join("\n", map)}");
+        var map = data
+            .Select((x) => $"{x.ID}. {x.Reason} [{new DiscordTimestamp(x.Timestamp).longDateTime()}] by {this.Context.Guild.GetUser(x.ExecutorID).Mention}");
+        EmbedBuilder embed = new EmbedBuilder()
+            .WithAuthor(name: $"Warn list for {guildUser}", iconUrl: this.Context.Guild.IconUrl)
+            .WithThumbnailUrl(guildUser.GetDisplayAvatarUrl())
+            .WithCurrentTimestamp()
+            .WithColor(Global.BotColors.Randomize().IntCode)
+            .WithDescription(string.Join("\n", map))
+            .WithFooter($"Requested by {this.Context.User}");
+        await this.RespondAsync(embed: embed.Build());
     }
 }
