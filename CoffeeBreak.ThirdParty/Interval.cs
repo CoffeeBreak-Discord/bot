@@ -14,6 +14,13 @@ public static class Interval
         return timer;
     }
 
+    public static async void SetInterval(Func<Task> action, TimeSpan timeout)
+    {
+        await action();
+        await Task.Delay(timeout).ConfigureAwait(false);
+        SetInterval(action, timeout);
+    }
+
     public static void ClearInterval(System.Timers.Timer timer)
     {
         timer.Stop();
@@ -24,5 +31,11 @@ public static class Interval
     {
         await Task.Delay(timeout).ConfigureAwait(false);
         action();
+    }
+
+    public static async Task SetTimeout(Func<Task> action, TimeSpan timeout)
+    {
+        await Task.Delay(timeout).ConfigureAwait(false);
+        await action();
     }
 }
