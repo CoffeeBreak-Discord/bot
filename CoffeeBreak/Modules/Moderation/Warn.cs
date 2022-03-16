@@ -78,7 +78,7 @@ public partial class ModerationModule
         }
 
         var map = data
-            .Select((x) => $"{x.ID}. {x.Reason} [{new DiscordTimestamp(x.Timestamp).longDateTime()}] by {this.Context.Guild.GetUser(x.ExecutorID).Mention}");
+            .Select((x) => $"{x.ID}. {x.Reason} [{new DiscordTimestamp(x.Timestamp).LongDateTime()}] by {this.Context.Guild.GetUser(x.ExecutorID).Mention}");
         EmbedBuilder embed = new EmbedBuilder()
             .WithAuthor(name: $"Warn list for {guildUser}", iconUrl: this.Context.Guild.IconUrl)
             .WithThumbnailUrl(guildUser.GetDisplayAvatarUrl())

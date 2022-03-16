@@ -51,7 +51,7 @@ public partial class GeneralModule
                 $"Category: {guild.CategoryChannels.Count}\nText: {guild.TextChannels.Count}\nVoice: {guild.StageChannels.Count + guild.VoiceChannels.Count}",
                 true)
             .AddField("Server Owner", $"{_client.Rest.GetUserAsync(guild.OwnerId).GetAwaiter().GetResult().Mention}", true)
-            .AddField("Created", $"{createdTimestamp.longDateTime()} ({createdTimestamp.relative()})", true)
+            .AddField("Created", $"{createdTimestamp.LongDateTime()} ({createdTimestamp.Relative()})", true)
             .AddField("Server Boost", $"Level: {guild.PremiumTier}\nBoost Count: {guild.PremiumSubscriptionCount}")
             .AddField("Roles", "Use `/serverinfo menu:Roles` for more information.")
             .AddField("Subscription", "Not implemented.");

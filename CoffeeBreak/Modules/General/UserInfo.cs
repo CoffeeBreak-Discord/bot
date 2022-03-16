@@ -46,11 +46,11 @@ public partial class GeneralModule
             embed
                 .AddField("Nickname", guildUser.Nickname ?? "No nickname", true)
                 .AddField($"Roles [{guildUser.Roles.Count()}]", "To see user roles use `/userinfo user:<user> menu:Roles`")
-                .AddField("Join Date", $"{joinedAt.longDateTime()} ({joinedAt.relative()})");
+                .AddField("Join Date", $"{joinedAt.LongDateTime()} ({joinedAt.Relative()})");
         }
 
         embed
-            .AddField("Account Created", $"{createdAt.longDateTime()} ({createdAt.relative})")
+            .AddField("Account Created", $"{createdAt.LongDateTime()} ({createdAt.Relative})")
             .AddField("Subscription", "Coming soon!");
     }
 

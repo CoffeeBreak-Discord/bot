@@ -2,49 +2,49 @@ namespace CoffeeBreak.Function;
 
 public class DiscordTimestamp
 {
-    public long unixSeconds = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+    public long UnixSeconds = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
     public DiscordTimestamp(DateTimeOffset dateTimeOffset)
     {
-        this.unixSeconds = dateTimeOffset.ToUnixTimeSeconds();
+        this.UnixSeconds = dateTimeOffset.ToUnixTimeSeconds();
     }
 
-    public string format()
+    public string Format()
     {
-        return $"<t:{this.unixSeconds}>";
+        return $"<t:{this.UnixSeconds}>";
     }
 
-    public string shortTime()
+    public string ShortTime()
     {
-        return this.format().Replace(">", ":t>");
+        return this.Format().Replace(">", ":t>");
     }
 
-    public string longTime()
+    public string LongTime()
     {
-        return this.format().Replace(">", ":T>");
+        return this.Format().Replace(">", ":T>");
     }
 
-    public string shortDate()
+    public string ShortDate()
     {
-        return this.format().Replace(">", ":d>");
+        return this.Format().Replace(">", ":d>");
     }
 
-    public string longDate()
+    public string LongDate()
     {
-        return this.format().Replace(">", ":D>");
+        return this.Format().Replace(">", ":D>");
     }
 
-    public string shortDateTime()
+    public string ShortDateTime()
     {
-        return this.format().Replace(">", ":f>");
+        return this.Format().Replace(">", ":f>");
     }
 
-    public string longDateTime()
+    public string LongDateTime()
     {
-        return this.format().Replace(">", ":F>");
+        return this.Format().Replace(">", ":F>");
     }
 
-    public string relative()
+    public string Relative()
     {
-        return this.format().Replace(">", ":R>");
+        return this.Format().Replace(">", ":R>");
     }
 }
