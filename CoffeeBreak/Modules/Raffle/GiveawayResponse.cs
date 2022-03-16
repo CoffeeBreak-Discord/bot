@@ -94,14 +94,11 @@ public partial class RaffleModule
         // If the giveaway less than State.Giveaway.MinuteInterval, proceed to cache
         TimeSpan ts = data.ExpiredDate - DateTime.Now;
         int minDiff = (int) Math.Floor(ts.TotalMinutes);
-        string key = $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}";
         int interval = Global.State.Giveaway.MinuteInterval;
         if (interval >= minDiff)
         {
-            Logging.Info($"Add {key} to State.Giveaway.GiveawayActive because the Giveaway less than {interval} minutes.", "GAPool");
-            Global.State.Giveaway.GiveawayActive.Add(
-                $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}",
-                data.ExpiredDate);
+            Logging.Info($"Add ID:{data.ID} to State.Giveaway.GiveawayActive because the Giveaway less than {interval} minutes.", "GAPool");
+            Global.State.Giveaway.GiveawayActive.Add(data.ID, data.ExpiredDate);
         }
 
         await this.RespondAsync(
@@ -214,7 +211,7 @@ public partial class RaffleModule
         if (channel == null) return;
         var message = await channel.GetMessageAsync(data.MessageID);
         if (message == null) return;
-        await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db);
+        await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db, data.ID);
         await this.RespondAsync("Giveaway successfully rerolled!", ephemeral: true);
     }
 }

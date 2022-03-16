@@ -1,6 +1,5 @@
 using CoffeeBreak.Function;
 using CoffeeBreak.ThirdParty;
-using Discord;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,21 +15,24 @@ public class CachingGiveawayService
         client.ShardReady += this.ShardReady;
     }
 
-    public async Task ShardReady(DiscordSocketClient client)
+    public Task ShardReady(DiscordSocketClient client)
     {
-        // Get cache first before looping
-        await FetchDatabaseAsync();
         // Make this pool as async because if this pool is
         // non blockable, we afraid the data will executed more than 1 time.
-        Interval.SetInterval(async () => await CachePool(), 1000);
+        Interval.SetInterval(async () => await CachePool(), TimeSpan.FromSeconds(1));
         Logging.Info("Giveaway Pool is ready!", "GAPool");
+        return Task.CompletedTask;
     }
 
     private async Task CachePool()
     {
         // Get minute from server, divide it from Giveaway Interval.
         // If result is 0, execute caching for database
+#if DEBUG
         int now = int.Parse(DateTime.Now.ToString("ss"));
+#else
+        int now = int.Parse(DateTime.Now.ToString("mm"));
+#endif
         int interval = Global.State.Giveaway.MinuteInterval;
         if (now % interval == 0) await this.FetchDatabaseAsync();
 
@@ -58,13 +60,10 @@ public class CachingGiveawayService
             if (minDiff >= interval) continue;
 
             // Insert to cache
-            string key = $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}";
-            if (Global.State.Giveaway.GiveawayActive.Where(x => x.Key == key).Count() > 0) continue;
+            if (Global.State.Giveaway.GiveawayActive.Where(x => x.Key == data.ID).Count() > 0) continue;
 
-            Logging.Info($"Add {key} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
-            Global.State.Giveaway.GiveawayActive.Add(
-                $"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}",
-                data.ExpiredDate);
+            Logging.Info($"Add ID:{data.ID} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
+            Global.State.Giveaway.GiveawayActive.Add(data.ID, data.ExpiredDate);
         }
     }
 
@@ -74,22 +73,16 @@ public class CachingGiveawayService
         // if the Collection make changed
         foreach (var giveaway in Global.State.Giveaway.GiveawayActive.ToList())
         {
-            // Fetch id from key
-            var keySplit = giveaway.Key.Split(':');
-            ulong guildID = ulong.Parse(keySplit[0]);
-            ulong channelID = ulong.Parse(keySplit[1]);
-            ulong messageID = ulong.Parse(keySplit[2]);
-
             // Get data, for scoping purposes
             var data = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).Include(m => m.GiveawayParticipant)
-                .Where(x => x.GiveawayConfig.GuildID == guildID && x.GiveawayConfig.ChannelID == channelID && x.MessageID == messageID)
+                .Where(x => x.ID == giveaway.Key)
                 .FirstOrDefaultAsync();
 
             // Get guild, channel, and message
-            var guild = _client.GetGuild(guildID);
+            var guild = _client.GetGuild(data!.GiveawayConfig.GuildID);
             // TODO: If guild is null, delete all data based on channel
             if (guild == null) continue;
-            var channel = guild.GetChannel(channelID) as SocketTextChannel;
+            var channel = guild.GetChannel(data!.GiveawayConfig.ChannelID) as SocketTextChannel;
             if (channel == null) continue;
 
             // Check diff before get message because we afraid discord
@@ -98,12 +91,12 @@ public class CachingGiveawayService
             if (msVal - DateTimeOffset.Now.ToUnixTimeSeconds() > 0) continue;
 
             // Get message, if null remove to cache because is unecessary
-            var message = await channel.GetMessageAsync(messageID);
+            var message = await channel.GetMessageAsync(data.MessageID);
             if (message == null)
             {
-                Logging.Warning($"Invalid giveaway from {guildID}:{channelID}[{messageID}]. Removing from database.", "GAPool");
+                Logging.Warning($"Invalid giveaway from ID:{giveaway.Key}. Removing from database.", "GAPool");
                 Global.State.Giveaway.GiveawayActive.Remove(giveaway.Key);
-                
+
                 if (data == null) continue;
                 if (data.GiveawayParticipant != null && data.GiveawayParticipant.Count() > 0)
                     _db.GiveawayParticipant.RemoveRange(data.GiveawayParticipant);
@@ -113,9 +106,8 @@ public class CachingGiveawayService
             }
 
             // If safe from anything, execute stop giveaway
-            Logging.Info($"Stop giveaway for {guildID}:{channelID}[{messageID}].", "GAPool");
-            Global.State.Giveaway.GiveawayActive.Remove(giveaway.Key);
-            await GiveawayManager.StopGiveawayAsync(guild, channel, message, _db);
+            Logging.Info($"Stop giveaway for ID:{giveaway.Key}.", "GAPool");
+            await GiveawayManager.StopGiveawayAsync(guild, channel, message, _db, giveaway.Key);
         }
     }
 }
