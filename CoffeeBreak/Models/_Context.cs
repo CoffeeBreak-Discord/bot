@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Models;
-public class Context : DbContext
+public class DatabaseContext : DbContext
 {
     public DbSet<WarnList> WarnList => this.Set<WarnList>();
     public DbSet<GiveawayRunning> GiveawayRunning => this.Set<GiveawayRunning>();

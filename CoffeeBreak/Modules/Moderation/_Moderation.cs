@@ -1,5 +1,5 @@
 using CoffeeBreak.Function;
-using CoffeeBreak.Services;
+using CoffeeBreak.Models;
 using Discord.Interactions;
 using Discord.WebSocket;
 
@@ -7,12 +7,11 @@ namespace CoffeeBreak.Modules;
 public partial class ModerationModule : InteractionModuleBase<ShardedInteractionContext>
 {
     private DiscordShardedClient _client;
-    private DatabaseService _db;
+    private DatabaseContext _db = new DatabaseContext();
 
-    public ModerationModule(DiscordShardedClient client, DatabaseService db)
+    public ModerationModule(DiscordShardedClient client)
     {
         _client = client;
-        _db = db;
     }
 
     private class DeclinedPermissionContext

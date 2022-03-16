@@ -1,6 +1,5 @@
 using CoffeeBreak.Function;
-using CoffeeBreak.Services;
-using CoffeeBreak.ThirdParty;
+using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -12,11 +11,10 @@ public partial class RaffleModule
     [Group("giveaway", "Manage giveaway on your server.")]
     public class GiveawayCommand : InteractionModuleBase<ShardedInteractionContext>
     {
-        private DatabaseService _db;
+        private DatabaseContext _db = new DatabaseContext();
         private DiscordShardedClient _client;
-        public GiveawayCommand(DatabaseService db, DiscordShardedClient client)
+        public GiveawayCommand(DiscordShardedClient client)
         {
-            _db = db;
             _client = client;
         }
 

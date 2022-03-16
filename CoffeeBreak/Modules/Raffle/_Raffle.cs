@@ -1,15 +1,14 @@
-using CoffeeBreak.Services;
+using CoffeeBreak.Models;
 using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.Modules;
 public partial class RaffleModule : InteractionModuleBase<ShardedInteractionContext>
 {
-    private DatabaseService _db;
+    private DatabaseContext _db = new DatabaseContext();
     private DiscordShardedClient _client;
-    public RaffleModule(DatabaseService db, DiscordShardedClient client)
+    public RaffleModule(DiscordShardedClient client)
     {
-        _db = db;
         _client = client;
     }
 }

@@ -1,4 +1,5 @@
-﻿using CoffeeBreak.ThirdParty;
+﻿using CoffeeBreak.Models;
+using CoffeeBreak.ThirdParty;
 using CoffeeBreak.Services;
 using Discord.WebSocket;
 using Discord.Interactions;
@@ -21,8 +22,6 @@ public partial class Program
             .AddSingleton<CommandHandlerService>()
             // Game Activity
             .AddSingleton<GameActivityService>()
-            // Database
-            .AddSingleton<DatabaseService>()
             // Redis
             .AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()))
@@ -43,7 +42,7 @@ public partial class Program
 
         // Check database connection
         Logging.Info("Pinging database", "Injector");
-        await build.GetRequiredService<DatabaseService>().Database.CanConnectAsync();
+        await new DatabaseContext().Database.CanConnectAsync();
         Logging.Info("Pinging database successful!", "Injector");
 
         // Check redis connection
