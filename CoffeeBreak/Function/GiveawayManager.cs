@@ -1,5 +1,4 @@
 using CoffeeBreak.Models;
-using CoffeeBreak.Services;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -55,7 +54,7 @@ public class GiveawayManager
         return embed.Build();
     }
 
-    public static async Task StopGiveawayAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseService db, bool isCanceled = false)
+    public static async Task StopGiveawayAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseContext db, bool isCanceled = false)
     {
         // Load data
         var data = await db.GiveawayRunning

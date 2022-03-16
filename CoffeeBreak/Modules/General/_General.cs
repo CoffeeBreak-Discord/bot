@@ -1,4 +1,4 @@
-using CoffeeBreak.Services;
+using CoffeeBreak.Models;
 using Discord.Interactions;
 using Discord.WebSocket;
 using StackExchange.Redis;
@@ -6,13 +6,12 @@ using StackExchange.Redis;
 namespace CoffeeBreak.Modules;
 public partial class GeneralModule : InteractionModuleBase<ShardedInteractionContext>
 {
-    private DatabaseService _db;
+    private DatabaseContext _db = new DatabaseContext();
     private InteractionService _cmd;
     private DiscordShardedClient _client;
     private IConnectionMultiplexer _cache;
-    public GeneralModule(DiscordShardedClient client, DatabaseService db, InteractionService cmd, IConnectionMultiplexer cache)
+    public GeneralModule(DiscordShardedClient client, InteractionService cmd, IConnectionMultiplexer cache)
     {
-        _db = db;
         _cmd = cmd;
         _client = client;
         _cache = cache;
