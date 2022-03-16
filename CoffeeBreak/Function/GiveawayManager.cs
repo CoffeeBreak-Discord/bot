@@ -54,11 +54,7 @@ public class GiveawayManager
         return embed.Build();
     }
 
-<<<<<<< HEAD
     public static async Task StopGiveawayAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseContext db, ulong id, bool isCanceled = false)
-=======
-    public static async Task StopGiveawayAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseService db, ulong id, bool isCanceled = false)
->>>>>>> 2ebde0b (merge fixes)
     {
         // Load data
         var data = await db.GiveawayRunning
