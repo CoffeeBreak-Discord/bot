@@ -211,6 +211,21 @@ public partial class RaffleModule
         if (channel == null) return;
         var message = await channel.GetMessageAsync(data.MessageID);
         if (message == null) return;
+
+        // If giveaway more than one days (fixed), remove the button
+        TimeSpan ts = DateTime.Now - data.ExpiredDate.AddDays(1);
+        if (Math.Ceiling(ts.TotalDays) > 0)
+        {
+            var button = new ComponentBuilder()
+                .WithButton("Reroll! 🔂", $"button_giveaway_reroll:{data!.ID}", ButtonStyle.Danger, disabled: true)
+                .Build();
+            await channel.ModifyMessageAsync(message.Id, Message => Message.Components = button);
+            await this.RespondAsync(
+                "This giveaway is expired, please make new giveaway using `/giveaway start` command.",
+                ephemeral: true);
+            return;
+        }
+
         await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db, data.ID);
         await this.RespondAsync("Giveaway successfully rerolled!", ephemeral: true);
     }
