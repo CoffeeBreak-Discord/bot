@@ -178,8 +178,8 @@ public partial class RaffleModule
             var message = await channel.GetMessageAsync(data.MessageID);
             if (message == null) return;
 
-            Global.State.Giveaway.GiveawayActive.Remove($"{data.GiveawayConfig.GuildID}:{data.GiveawayConfig.ChannelID}:{data.MessageID}");
-            await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db, isCanceled);
+            Global.State.Giveaway.GiveawayActive.Remove(id);
+            await GiveawayManager.StopGiveawayAsync(this.Context.Guild, channel, message, _db, data.ID, isCanceled);
             await this.RespondAsync("Giveaway successfully " + (isCanceled ? "canceled!" : "stopped!"), ephemeral: true);
         }
     }

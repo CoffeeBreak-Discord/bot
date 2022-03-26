@@ -52,7 +52,7 @@ public class Global
             /// GiveawayActive("guildID:channelID:messageID", expiredDate);
             /// </code></example>
             /// </summary>
-            public static Dictionary<string, DateTime> GiveawayActive = new Dictionary<string, DateTime>();
+            public static Dictionary<ulong, DateTime> GiveawayActive = new Dictionary<ulong, DateTime>();
         }
     }
 }
