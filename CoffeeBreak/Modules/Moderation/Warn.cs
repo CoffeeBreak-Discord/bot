@@ -8,7 +8,7 @@ namespace CoffeeBreak.Modules;
 public partial class ModerationModule
 {
     [SlashCommand("warn", "Set warn from specified user")]
-    public async Task Warn(
+    public async Task WarnCommandAsync(
         [Summary(description: "Target user")] IUser user,
         [Summary(description: "Reason")] string reason = "No reason")
     {
@@ -50,7 +50,7 @@ public partial class ModerationModule
     }
 
     [SlashCommand("warnlist", "Get warn list from specified user")]
-    public async Task Warnlist(
+    public async Task WarnlistCommandAsync(
         [Summary(description: "Target user")] IUser user)
     {
         SocketGuildUser? guildUser = this.Context.Guild.GetUser(user.Id);

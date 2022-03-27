@@ -8,7 +8,7 @@ public partial class ModerationModule
     [RequireBotPermission(GuildPermission.KickMembers)]
     [RequireUserPermission(GuildPermission.KickMembers)]
     [SlashCommand("kick", "Kick user")]
-    public async Task Kick(
+    public async Task KickCommandAsync(
         [Summary(description: "Target user")] IUser user,
         [Summary(description: "Reason")] string reason = "No reason")
     {
