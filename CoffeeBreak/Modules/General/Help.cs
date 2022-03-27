@@ -8,7 +8,7 @@ public partial class GeneralModule
     private IReadOnlyList<SlashCommandInfo> _cmdList = new List<SlashCommandInfo>();
 
     [SlashCommand("help", "List all the command in this bot or get info about them")]
-    public async Task Help([Summary(description: "The command you can know how to use it")] string? command = null)
+    public async Task HelpCommandAsync([Summary(description: "The command you can know how to use it")] string? command = null)
     {
         _cmdList = _cmd.SlashCommands;
         EmbedBuilder embed = new EmbedBuilder()

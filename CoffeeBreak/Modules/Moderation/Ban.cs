@@ -8,7 +8,7 @@ public partial class ModerationModule
     [RequireBotPermission(GuildPermission.BanMembers)]
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("ban", "Ban user")]
-    public async Task Ban(
+    public async Task BanCommandAsync(
         [Summary(description: "Target user")] IUser user,
         [Summary(description: "Reason")] string reason = "No reason")
     {
@@ -45,7 +45,7 @@ public partial class ModerationModule
     [RequireBotPermission(GuildPermission.BanMembers)]
     [RequireUserPermission(GuildPermission.BanMembers)]
     [SlashCommand("unban", "Unban user")]
-    public async Task Unban(
+    public async Task UnbanCommandAsync(
         [Summary(description: "Snowflake ID of the user")] string userID)
     {
         // Check if command is executed in guild

@@ -5,7 +5,7 @@ namespace CoffeeBreak.Modules;
 public partial class GeneralModule
 {
     [SlashCommand("version", "Print the bot version")]
-    public async Task Version()
+    public async Task VersionCommandAsync()
     {
         EmbedBuilder embed = new EmbedBuilder()
             .WithAuthor(name: "Bot version", iconUrl: _client.CurrentUser.GetAvatarUrl())

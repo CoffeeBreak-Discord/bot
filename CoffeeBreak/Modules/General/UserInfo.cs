@@ -12,7 +12,7 @@ public partial class GeneralModule
     }
 
     [SlashCommand("userinfo", "Display user info")]
-    public async Task UserInfo(
+    public async Task UserInfoCommandAsync(
         [Summary(description: "Target user that you want to stalk")] IUser? user = null,
         [Summary(description: "User info menu")] ChoiceUserInfo menu = ChoiceUserInfo.Normal)
     {

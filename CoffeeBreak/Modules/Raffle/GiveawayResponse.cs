@@ -6,12 +6,12 @@ using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Modules;
-public partial class RaffleModule
+public partial class RaffleGiveawayModule
 {
     // If user spawning giveaway, first of all user will teleport to
     // this interaction to parse the menu value.
     [ComponentInteraction("select_menu_giveaway")]
-    public async Task GiveawaySelectRoleResponse(string[] selectedMenu)
+    public async Task SelectRoleResponseAsync(string[] selectedMenu)
     {
         string menu = selectedMenu[0];
         if (menu == "role_none")
@@ -36,11 +36,11 @@ public partial class RaffleModule
     // If user choose the role that required for giveaway, will teleport
     // to this interaction
     [ComponentInteraction("select_menu_giveaway_role")]
-    public async Task GiveawaySelectVerifiedRequiredRoleResponse(string[] selectedMenu)
+    public async Task SelectVerifiedRequiredRoleResponseAsync(string[] selectedMenu)
         => await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>($"modal_giveaway:required;{selectedMenu[0] ?? "0"}");
 
     [ModalInteraction("modal_giveaway:*;*")]
-    public async Task GiveawayModalResponse(string mode, string roleID, GiveawayManager.GiveawayModal modal)
+    public async Task ModalResponseAsync(string mode, string roleID, GiveawayManager.GiveawayModal modal)
     {
         Models.GiveawayRunning data = new Models.GiveawayRunning();
         data.GiveawayName = modal.GiveawayName;
@@ -108,7 +108,7 @@ public partial class RaffleModule
     }
 
     [ComponentInteraction("button_giveaway_toggle:*")]
-    public async Task GiveawayButtonToggleResponse(string ids)
+    public async Task ButtonToggleResponseAsync(string ids)
     {
         // Check giveaway is running or not
         ulong id = ulong.Parse(ids);
@@ -186,7 +186,7 @@ public partial class RaffleModule
     }
 
     [ComponentInteraction("button_giveaway_reroll:*")]
-    public async Task GiveawayRerollButtonResponse(string ids)
+    public async Task RerollButtonResponseAsync(string ids)
     {
         ulong id = ulong.Parse(ids);
         var data = await _db.GiveawayRunning.Include(m => m.GiveawayConfig).FirstOrDefaultAsync(x => x.ID == id);
