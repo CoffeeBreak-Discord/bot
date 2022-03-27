@@ -12,7 +12,7 @@ public partial class GeneralModule
     }
 
     [SlashCommand("serverinfo", "Display server info")]
-    public async Task ServerInfo(ChoiceServerInfo menu = ChoiceServerInfo.Normal)
+    public async Task ServerInfoCommandAsync(ChoiceServerInfo menu = ChoiceServerInfo.Normal)
     {
         if (this.Context.Guild == null)
         {

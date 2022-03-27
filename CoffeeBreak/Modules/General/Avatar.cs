@@ -5,7 +5,7 @@ namespace CoffeeBreak.Modules;
 public partial class GeneralModule
 {
     [SlashCommand("avatar", "Display user avatar")]
-    public async Task Avatar(
+    public async Task AvatarCommandAsync(
         [Summary(description: "Target user that you want to stalk")] IUser? user = null)
     {
         user ??= this.Context.User;
