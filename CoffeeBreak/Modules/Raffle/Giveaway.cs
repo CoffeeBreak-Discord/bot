@@ -18,7 +18,7 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("start", "Start the giveaway.")]
-    public async Task Start()
+    public async Task StartCommandAsync()
     {
         var checkChannel = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
         if (checkChannel == null)
@@ -44,7 +44,7 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("channel", "Set channel giveaway")]
-    public async Task Channel(
+    public async Task ChannelCommandAsync(
         [ChannelTypes(ChannelType.Text)][Summary(description: "Channel target for giveaway")]
         ITextChannel? channel = null)
     {
@@ -86,19 +86,19 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("stop", "Stop the giveaway and roll the winner")]
-    public async Task Stop(
+    public async Task StopCommandAsync(
         [Summary(description: "Giveaway ID - You can peek the ID from the bottom of giveaway")] ulong id)
         => await this.StopCancelAsync(id);
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("cancel", "Cancel the giveaway")]
-    public async Task Cancel(
+    public async Task CancelCommandAsync(
         [Summary(description: "Giveaway ID - You can peek the ID from the bottom of giveaway")] ulong id)
         => await this.StopCancelAsync(id, true);
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("edit", "Edit the giveaway")]
-    public async Task Edit(
+    public async Task EditCommandAsync(
         [Summary(description: "Giveaway ID")] ulong id,
         [Summary(description: "Giveaway name")] string? giveawayName = null,
         [Summary(description: "Giveaway note")] string? giveawayNote = null,
