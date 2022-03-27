@@ -6,7 +6,7 @@ using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Modules;
-public partial class RaffleModule
+public partial class RaffleGiveawayModule
 {
     // If user spawning giveaway, first of all user will teleport to
     // this interaction to parse the menu value.
