@@ -2,6 +2,7 @@ using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace CoffeeBreak.Modules;
@@ -70,5 +71,22 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
             await this.RespondAsync("Role not found.", ephemeral: true);
             return;
         }
+
+        var data = await _db.StageConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        if (data == null)
+        {
+            await _db.StageConfig.AddAsync(new StageConfig
+            {
+                GuildID = this.Context.Guild.Id,
+                RoleID = role.Id
+            });
+        }
+        else
+        {
+            data.RoleID = role.Id;
+            _db.StageConfig.Update(data);
+        }
+        await _db.SaveChangesAsync();
+        await this.RespondAsync($"<@&{role.Name}> successfully set as Speaker Role.", ephemeral: true);
     }
 }
