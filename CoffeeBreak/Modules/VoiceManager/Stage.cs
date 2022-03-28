@@ -1,3 +1,4 @@
+using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -9,6 +10,7 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 {
     private DiscordShardedClient _client;
     private IConnectionMultiplexer _cache;
+    private DatabaseContext _db = new DatabaseContext();
 
     public VoiceManagerStageModule(DiscordShardedClient client, IConnectionMultiplexer cache)
     {
@@ -16,10 +18,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
         _cache = cache;
     }
 
-    // TODO: Make command
-    // /stage join
-    // /stage leave
-    // /stage roles
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
@@ -46,7 +44,7 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
-    [SlashCommand("leave", "Make the bot watching the stage.", runMode: RunMode.Async)]
+    [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
     {
         var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as IStageChannel;
@@ -58,5 +56,19 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 
         await channel.DisconnectAsync();
         await this.RespondAsync($"Bot successfully disconnected from **{channel.Name}** stage.", ephemeral: true);
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
+    [RequireUserPermission(GuildPermission.ManageEvents)]
+    [RequireBotPermission(GuildPermission.MoveMembers)]
+    [SlashCommand("role", "Set speaker role in stage.", runMode: RunMode.Async)]
+    public async Task RoleCommandAsync(
+        [Summary(description: "Speaker's role name")] IRole role)
+    {
+        if (this.Context.Guild.GetRole(role.Id) == null)
+        {
+            await this.RespondAsync("Role not found.", ephemeral: true);
+            return;
+        }
     }
 }

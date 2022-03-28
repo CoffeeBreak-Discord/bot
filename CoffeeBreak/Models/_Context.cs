@@ -7,6 +7,7 @@ public class DatabaseContext : DbContext
     public DbSet<GiveawayRunning> GiveawayRunning => this.Set<GiveawayRunning>();
     public DbSet<GiveawayConfig> GiveawayConfig => this.Set<GiveawayConfig>();
     public DbSet<GiveawayParticipant> GiveawayParticipant => this.Set<GiveawayParticipant>();
+    public DbSet<StageConfig> StageConfig => this.Set<StageConfig>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
     {
