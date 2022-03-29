@@ -12,6 +12,10 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     private DiscordShardedClient _client;
     private IConnectionMultiplexer _cache;
     private DatabaseContext _db = new DatabaseContext();
+    private string _cacheKeys
+    {
+        get { return $"coffeebreak_stage:{this.Context.Guild.Id}"; }
+    }
 
     public VoiceManagerStageModule(DiscordShardedClient client, IConnectionMultiplexer cache)
     {
@@ -22,7 +26,7 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
-    [SlashCommand("join", "Make the bot watching the stage.", runMode: RunMode.Async)]
+    [SlashCommand("join", "Make the bot watching the stage.")]
     public async Task JoinCommandAsync(
         [ChannelTypes(ChannelType.Stage), Summary(description: "Stage target")] IStageChannel? channel = null)
     {
@@ -38,8 +42,32 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
             return;
         }
 
+        // Check if bot is connected
+        var botState = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as IStageChannel;
+        if (botState != null)
+        {
+            await this.RespondAsync(
+                $"The bot already joined in <#{channel.Id}> stage.",
+                ephemeral: true);
+            return;
+        }
+ 
+        // Check channel
+        var data = await _db.StageConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        if (data == null)
+        {
+            await this.RespondAsync(
+                "You didn't set the Speaker Role. Please use `/stage role <role>` to set the Speaker Role.",
+                ephemeral: true);
+            return;
+        }
+
+        // Insert to cache pool
+        if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
+        await _cache.GetDatabase().StringSetAsync(_cacheKeys, data.RoleID);
+
         await channel.ConnectAsync();
-        await this.RespondAsync($"Joined **{channel.Name}** stage.", ephemeral: true);
+        await this.RespondAsync($"Joined <#{channel.Id}> stage.", ephemeral: true);
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
@@ -55,14 +83,15 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
             return;
         }
 
+        if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
         await channel.DisconnectAsync();
-        await this.RespondAsync($"Bot successfully disconnected from **{channel.Name}** stage.", ephemeral: true);
+        await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
-    [SlashCommand("role", "Set speaker role in stage.", runMode: RunMode.Async)]
+    [SlashCommand("role", "Set speaker role in stage.")]
     public async Task RoleCommandAsync(
         [Summary(description: "Speaker's role name")] IRole role)
     {
