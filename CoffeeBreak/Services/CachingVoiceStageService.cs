@@ -1,3 +1,4 @@
+using CoffeeBreak.ThirdParty;
 using Discord;
 using Discord.WebSocket;
 using StackExchange.Redis;
@@ -14,13 +15,14 @@ public class CachingVoiceStageService
         _cache = cache;
 
         client.UserVoiceStateUpdated += this.UserVoiceStateUpdated;
+        Logging.Info($"Voice Stage caching loaded!", "VoiceStage");
     }
 
     private async Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState stateBefore, SocketVoiceState stateAfter)
     {
         var guildUser = user as SocketGuildUser;
         if (guildUser == null) return;
-        var voiceState = guildUser.VoiceChannel as IStageChannel;
+        var voiceState = guildUser.VoiceChannel as SocketStageChannel;
         Console.WriteLine(guildUser.VoiceChannel.GetChannelType());
         if (voiceState == null) return;
 
@@ -34,6 +36,10 @@ public class CachingVoiceStageService
         if (getRoleID.IsNullOrEmpty) return;
         ulong roleID = ulong.Parse(getRoleID);
 
-        Console.WriteLine(user);
+        // Move the speaker to the stage
+        if (guildUser.Roles.Where(x => x.Id == roleID).Count() == 0) return;
+        if (voiceState.Speakers.ToArray().Where(x => x.Id == user.Id).Count() > 0) return;
+        await voiceState.MoveToSpeakerAsync(guildUser);
+        Logging.Info($"Moving {user} to Speaker in {guildUser.Guild.Id}[{voiceState.Id}]", "VoiceStage");
     }
 }
