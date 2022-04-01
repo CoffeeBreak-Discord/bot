@@ -16,7 +16,9 @@ public partial class GeneralModule
     {
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can't use this command because this command only can executed in text channel.");
+            await this.RespondAsync(
+                "You can't use this command because this command only can executed in text channel.",
+                ephemeral: true);
             return;
         }
 
