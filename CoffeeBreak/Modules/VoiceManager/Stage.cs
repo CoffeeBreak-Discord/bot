@@ -26,6 +26,9 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
+    [RequireBotPermission(GuildPermission.RequestToSpeak)]
+    [RequireBotPermission(GuildPermission.ManageGuild)]
+    [RequireBotPermission(GuildPermission.ManageEvents)]
     [SlashCommand("join", "Make the bot watching the stage.", runMode: RunMode.Async)]
     public async Task JoinCommandAsync(
         [ChannelTypes(ChannelType.Stage), Summary(description: "Stage target")] IStageChannel? channel = null)
@@ -73,6 +76,9 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
+    [RequireBotPermission(GuildPermission.RequestToSpeak)]
+    [RequireBotPermission(GuildPermission.ManageGuild)]
+    [RequireBotPermission(GuildPermission.ManageEvents)]
     [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
     {
@@ -91,6 +97,9 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
+    [RequireBotPermission(GuildPermission.RequestToSpeak)]
+    [RequireBotPermission(GuildPermission.ManageGuild)]
+    [RequireBotPermission(GuildPermission.ManageEvents)]
     [SlashCommand("role", "Set speaker role in stage.")]
     public async Task RoleCommandAsync(
         [Summary(description: "Speaker's role name")] IRole role)
@@ -117,5 +126,39 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
         }
         await _db.SaveChangesAsync();
         await this.RespondAsync($"<@&{role.Id}> successfully set as Speaker Role.", ephemeral: true);
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
+    [RequireUserPermission(GuildPermission.ManageEvents)]
+    [RequireBotPermission(GuildPermission.MoveMembers)]
+    [RequireBotPermission(GuildPermission.RequestToSpeak)]
+    [RequireBotPermission(GuildPermission.ManageGuild)]
+    [RequireBotPermission(GuildPermission.ManageEvents)]
+    [SlashCommand("speaker", "Insert/Delete speaker role to the speaker user.")]
+    public async Task SpeakerCommandAsync([Summary(description: "User target")] IUser user)
+    {
+        var data = await _db.StageConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        if (data == null)
+        {
+            await this.RespondAsync(
+                "You didn't set the Speaker Role. Please use `/stage role <role>` to set the Speaker Role.",
+                ephemeral: true);
+            return;
+        }
+
+        var guildUser = user as SocketGuildUser;
+        if (guildUser == null) return;
+
+        // Check role
+        if (guildUser.Roles.Where(x => x.Id == data.RoleID).Count() > 0)
+        {
+            await guildUser.RemoveRoleAsync(data.RoleID);
+            await this.RespondAsync($"{guildUser.Mention}'s Speaker Role is removed.", ephemeral: true);
+        }
+        else
+        {
+            await guildUser.AddRoleAsync(data.RoleID);
+            await this.RespondAsync($"Add a Speaker Role to {guildUser.Mention}.", ephemeral: true);
+        }
     }
 }
