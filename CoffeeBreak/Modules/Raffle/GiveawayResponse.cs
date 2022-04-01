@@ -8,38 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CoffeeBreak.Modules;
 public partial class RaffleGiveawayModule
 {
-    // If user spawning giveaway, first of all user will teleport to
-    // this interaction to parse the menu value.
-    [ComponentInteraction("select_menu_giveaway")]
-    public async Task SelectRoleResponseAsync(string[] selectedMenu)
-    {
-        string menu = selectedMenu[0];
-        if (menu == "role_none")
-        {
-            await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>("modal_giveaway:none;0");
-            return;
-        }
-
-        var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("Select role").WithCustomId("select_menu_giveaway_role")
-            .WithMinValues(1).WithMaxValues(1);
-        foreach (var role in this.Context.Guild.Roles)
-            menuBuilder.AddOption(role.Name, role.Id.ToString());
-        var builder = new ComponentBuilder().WithSelectMenu(menuBuilder);
-
-        await this.RespondAsync(
-            "Choose the role required below:\n*Dismiss this message if you want to cancel this command.*",
-            components: builder.Build(),
-            ephemeral: true);
-    }
-
-    // If user choose the role that required for giveaway, will teleport
-    // to this interaction
-    [ComponentInteraction("select_menu_giveaway_role")]
-    public async Task SelectVerifiedRequiredRoleResponseAsync(string[] selectedMenu)
-        => await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>($"modal_giveaway:required;{selectedMenu[0] ?? "0"}");
-
-    [ModalInteraction("modal_giveaway:*;*")]
+    [ModalInteraction("modal_giveaway:*;*", true)]
     public async Task ModalResponseAsync(string mode, string roleID, GiveawayManager.GiveawayModal modal)
     {
         Models.GiveawayRunning data = new Models.GiveawayRunning();
@@ -107,7 +76,7 @@ public partial class RaffleGiveawayModule
             ephemeral: true);
     }
 
-    [ComponentInteraction("button_giveaway_toggle:*")]
+    [ComponentInteraction("button_giveaway_toggle:*", true)]
     public async Task ButtonToggleResponseAsync(string ids)
     {
         // Check giveaway is running or not
@@ -185,7 +154,7 @@ public partial class RaffleGiveawayModule
             ephemeral: true);
     }
 
-    [ComponentInteraction("button_giveaway_reroll:*")]
+    [ComponentInteraction("button_giveaway_reroll:*", true)]
     public async Task RerollButtonResponseAsync(string ids)
     {
         ulong id = ulong.Parse(ids);

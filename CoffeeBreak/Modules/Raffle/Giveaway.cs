@@ -18,7 +18,8 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("start", "Start the giveaway.")]
-    public async Task StartCommandAsync()
+    public async Task StartCommandAsync(
+        [Summary(description: "Required role")] IRole? requiredRole = null)
     {
         var checkChannel = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
         if (checkChannel == null)
@@ -29,17 +30,8 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
             return;
         }
 
-        // Make Select Menu
-        var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("Select an option").WithCustomId("select_menu_giveaway")
-            .WithMinValues(1).WithMaxValues(1)
-            .AddOption("Role Required", "role_required", "Choose if entries must have role")
-            .AddOption("No role limit", "role_none");
-        var builder = new ComponentBuilder().WithSelectMenu(menuBuilder);
-        await this.RespondAsync(
-            "Before you make a giveaway, please choose below:",
-            components: builder.Build(),
-            ephemeral: true);
+        await this.Context.Interaction.RespondWithModalAsync<GiveawayManager.GiveawayModal>(
+            requiredRole == null ? "modal_giveaway:none;0" : $"modal_giveaway:required;{requiredRole.Id}");
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
