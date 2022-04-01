@@ -28,6 +28,7 @@ class Program
                     .ScanIn(typeof(_20220207_ClassicModeration).Assembly).For.Migrations()
                     .ScanIn(typeof(_20220302_Giveaway).Assembly).For.Migrations()
                     .ScanIn(typeof(_20220311_GiveawayParticipant).Assembly).For.Migrations()
+                    .ScanIn(typeof(_20220328_StageConfig).Assembly).For.Migrations()
                 )
             .AddLogging(lb => lb.AddFluentMigratorConsole())
             .BuildServiceProvider(false);
