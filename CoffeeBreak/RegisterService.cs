@@ -26,7 +26,9 @@ public partial class Program
             .AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()))
             // Caching (Giveaway Modul)
-            .AddSingleton<CachingGiveawayService>();
+            .AddSingleton<CachingGiveawayService>()
+            //Caching (Voice Stage)
+            .AddSingleton<CachingVoiceStageService>();
     }
 
     private async void SetExtraStep(ServiceProvider build)

@@ -26,7 +26,7 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
-    [SlashCommand("join", "Make the bot watching the stage.")]
+    [SlashCommand("join", "Make the bot watching the stage.", runMode: RunMode.Async)]
     public async Task JoinCommandAsync(
         [ChannelTypes(ChannelType.Stage), Summary(description: "Stage target")] IStageChannel? channel = null)
     {
@@ -116,6 +116,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
             _db.StageConfig.Update(data);
         }
         await _db.SaveChangesAsync();
-        await this.RespondAsync($"<@&{role.Name}> successfully set as Speaker Role.", ephemeral: true);
+        await this.RespondAsync($"<@&{role.Id}> successfully set as Speaker Role.", ephemeral: true);
     }
 }
