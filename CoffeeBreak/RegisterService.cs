@@ -25,9 +25,11 @@ public partial class Program
             // Redis
             .AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()))
+            // Service that fired when the bot kicked/banned from guild
+            .AddSingleton<KillingGuildService>()
             // Caching (Giveaway Modul)
             .AddSingleton<CachingGiveawayService>()
-            //Caching (Voice Stage)
+            // Caching (Voice Stage)
             .AddSingleton<CachingVoiceStageService>();
     }
 

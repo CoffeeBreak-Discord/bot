@@ -16,14 +16,16 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only use this module in a Guild/Server.");
+            await this.RespondAsync(
+                "You can't use this command because this command only can executed in text channel.",
+                ephemeral: true);
             return;
         }
 
         // Check if user didn't found
         if (guildUser == null)
         {
-            await this.RespondAsync("User not found!");
+            await this.RespondAsync("User not found!", ephemeral: true);
             return;
         }
 
@@ -51,7 +53,9 @@ public partial class ModerationModule
         // Check if command is executed in guild
         if (this.Context.Guild == null)
         {
-            await this.RespondAsync("You can only use this module in a Guild/Server.");
+            await this.RespondAsync(
+                "You can't use this command because this command only can executed in text channel.",
+                ephemeral: true);
             return;
         }
 
