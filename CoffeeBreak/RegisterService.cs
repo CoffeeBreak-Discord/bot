@@ -27,6 +27,8 @@ public partial class Program
                 ConnectionMultiplexer.Connect(Database.GenerateRedisConnection()))
             // Service that fired when the bot kicked/banned from guild
             .AddSingleton<KillingGuildService>()
+            // Invite to Guild message
+            .AddSingleton<InviteToGuildService>()
             // Caching (Giveaway Modul)
             .AddSingleton<CachingGiveawayService>()
             // Caching (Voice Stage)
