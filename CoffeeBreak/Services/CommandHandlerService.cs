@@ -41,10 +41,12 @@ public class CommandHandlerService
         try
         {
             var ctx = new ShardedInteractionContext(_client, arg);
-            await _commands.ExecuteCommandAsync(ctx, _services);
+            var result = await _commands.ExecuteCommandAsync(ctx, _services);
+            if (result is PreconditionResult) await ctx.Interaction.RespondAsync(result.ErrorReason);
         }
         catch (Exception ex)
         {
+            // TODO: Not passed to logger?
             Console.WriteLine(ex.ToString());
 
             if (arg.Type == InteractionType.ApplicationCommand)
