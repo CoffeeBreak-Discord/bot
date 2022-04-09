@@ -14,6 +14,13 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - project: CoffeeBreak
+            img_name: bot
+          - project: CoffeeBreak.Migrator
+            img_name: migrator
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repo
@@ -50,7 +57,7 @@ jobs:
           flavor: |
             latest=auto
             suffix=${{ steps.flavor.outputs.name }}
-          images: ghcr.io/CoffeeBreak-Discord/bot
+          images: ghcr.io/CoffeeBreak-Discord/${{ matrix.img_name }}
           tags: |
             ${{ steps.tags.outputs.name }}
             latest
@@ -70,5 +77,6 @@ jobs:
           build-args: |
             VERSION=${{ steps.version.outputs.name }}
             COMMIT=${{ github.sha }}
+            PROJECT_NAME=${{ matrix.project }}
           cache-from: type=gha,mode=max
           cache-to: type=gha,mode=max
