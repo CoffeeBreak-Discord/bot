@@ -29,4 +29,4 @@ ENV VERSION=${VERSION} \
 COPY --from=build-stage /build .
 
 # Now we can run the app with DOCKER CMD
-ENTRYPOINT ["./run"]
+ENTRYPOINT ["/app/run"]
