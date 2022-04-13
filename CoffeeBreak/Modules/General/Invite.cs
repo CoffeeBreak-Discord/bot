@@ -14,8 +14,8 @@ public partial class GeneralModule
             .WithThumbnailUrl(_client.CurrentUser.GetAvatarUrl())
             .Build();
         var component = new ComponentBuilder()
-            .WithButton("Invite Bot", style: ButtonStyle.Link, url: Global.Bot.DiscordServer)
-            .WithButton("Discord Support Server", style: ButtonStyle.Link, url: Global.Bot.LinkInvite)
+            .WithButton("Invite Bot", style: ButtonStyle.Link, url: Global.Bot.LinkInvite)
+            .WithButton("Discord Support Server", style: ButtonStyle.Link, url: Global.Bot.DiscordServer)
             .Build();
         
         await this.RespondAsync(embed: embed, components: component, ephemeral: true);
