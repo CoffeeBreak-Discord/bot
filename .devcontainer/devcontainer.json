@@ -2,8 +2,8 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.224.2/containers/dotnet
 {
 	"name": "CoffeeBreak BOT",
-	// Prefer to use prebuilt images
-	"image": "ghcr.io/coffeebreak/devcontainer-bot",
+	"image": "ghcr.io/coffeebreak-discord/devcontainer-bot",
+
 	// Set *default* container specific settings.json values on container create.
 	"settings": {},
 
