@@ -3,7 +3,7 @@
 {
 	"name": "CoffeeBreak BOT",
 	// Prefer to use prebuilt images
-	"image": "ghcr.io/CoffeeBreak/devcontainer-bot",
+	"image": "ghcr.io/coffeebreak/devcontainer-bot",
 	"build": {
 		"dockerfile": "Dockerfile",
 		"args": {
