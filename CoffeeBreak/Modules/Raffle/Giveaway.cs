@@ -17,6 +17,13 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
+    [SlashCommand("setup", "Setup and check status of giveaway module.")]
+    public async Task SetupCommandAsync()
+    {
+        //
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("start", "Start the giveaway.")]
     public async Task StartCommandAsync(
         [Summary(description: "Required role")] IRole? requiredRole = null)

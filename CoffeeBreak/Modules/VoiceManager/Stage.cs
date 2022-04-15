@@ -24,6 +24,13 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
+    [SlashCommand("setup", "Setup and check status of giveaway module.")]
+    public async Task SetupCommandAsync()
+    {
+        //
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
     [RequireBotPermission(GuildPermission.RequestToSpeak)]
