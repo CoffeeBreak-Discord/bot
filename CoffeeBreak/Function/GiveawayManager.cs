@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CoffeeBreak.Function;
 public class GiveawayManager
 {
+    public static string IconURL = "https://media.discordapp.net/attachments/946050537814655046/948615258078085120/tada.png?width=400&height=394";
     public class GiveawayModal : IModal
     {
         public string Title => "Make a Giveaway!";
@@ -42,7 +43,7 @@ public class GiveawayManager
         var embed = new EmbedBuilder()
             .WithTitle("Giveaway Started!")
             .WithColor(Color.Green)
-            .WithThumbnailUrl("https://media.discordapp.net/attachments/946050537814655046/948615258078085120/tada.png?width=400&height=394")
+            .WithThumbnailUrl(IconURL)
             .WithCurrentTimestamp()
             .WithFooter($"ID: {data.ID}", client.CurrentUser.GetAvatarUrl())
             .WithDescription(data.GiveawayName)
