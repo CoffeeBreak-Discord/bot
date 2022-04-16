@@ -20,12 +20,12 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
     [SlashCommand("setup", "Setup and check status of giveaway module.")]
     public async Task SetupCommandAsync()
     {
-        var setup = new SetupEmbedBuilder("Giveaway", GiveawayManager.IconURL);
+        var setup = new SetupEmbedBuilder(this.Context, "Giveaway", GiveawayManager.IconURL);
 
         // Check giveaway channel
         var checkChannel = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
         if (checkChannel == null) setup.SetStatus(false);
-        setup.AddField("start", $"Channel Location: {(checkChannel == null ? "No channel" : $"<#{checkChannel.ChannelID}>")}");
+        setup.AddField("channel", $"Channel Location: {(checkChannel == null ? "No channel" : $"<#{checkChannel.ChannelID}>")}");
 
         await this.RespondAsync(embed: setup.Build());
     }

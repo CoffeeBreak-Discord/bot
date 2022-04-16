@@ -1,20 +1,24 @@
 using Discord;
+using Discord.Interactions;
 
 namespace CoffeeBreak.Function;
 public class SetupEmbedBuilder
 {
     private EmbedBuilder _embed;
     private string _title;
-    private bool _status;
+    private bool _status = true;
     private Dictionary<string, string> _field = new Dictionary<string, string>();
+    private ShardedInteractionContext _ctx;
 
-    public SetupEmbedBuilder(string title, string? thumbnailUrl = null)
+    public SetupEmbedBuilder(ShardedInteractionContext context, string title, string? thumbnailUrl = null)
     {
+        _ctx = context;
         _title = title;
         _embed = new EmbedBuilder()
             .WithColor(Global.BotColors.Randomize().IntCode)
             .WithTitle($"Setup {_title} Module")
-            .WithCurrentTimestamp();
+            .WithCurrentTimestamp()
+            .WithFooter($"Requested by {_ctx.User}");
 
         if (thumbnailUrl != null) _embed.WithThumbnailUrl(thumbnailUrl);
     }
@@ -26,7 +30,7 @@ public class SetupEmbedBuilder
     public Embed Build()
     {
         // Add status to field
-        this.AddField($"{_title} Module Status", _status ? "Active" : "Not Active");
+        _embed.AddField($"{_title} Module Status", _status ? "Active" : "Not Active");
 
         // If status is false, add warning description
         if (!_status)
