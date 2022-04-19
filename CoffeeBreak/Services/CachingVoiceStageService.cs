@@ -23,13 +23,19 @@ public class CachingVoiceStageService
         var guildUser = user as SocketGuildUser;
         if (guildUser == null) return;
         var voiceState = guildUser.VoiceChannel as SocketStageChannel;
-        Console.WriteLine(guildUser.VoiceChannel.GetChannelType());
         if (voiceState == null) return;
 
         // Ignore if bot didn't join the stage same as user
         var clientVoiceState = guildUser.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as IStageChannel;
         if (clientVoiceState == null) return;
-        if (clientVoiceState.Name != voiceState.Name) return;
+        if (clientVoiceState.Id != voiceState.Id) return;
+
+        // Get voice state before and after
+        var stageBefore = stateBefore.VoiceChannel as SocketStageChannel;
+        var stageAfter = voiceState;
+
+        // Don't spam if the speaker declined the request or down to the audience
+        if (stageBefore != null && !stageBefore.IsSpeaker && !stageAfter.IsSpeaker) return;
 
         // Get role from cache
         var getRoleID = await _cache.GetDatabase().StringGetAsync($"coffeebreak_stage:{guildUser.Guild.Id}");
