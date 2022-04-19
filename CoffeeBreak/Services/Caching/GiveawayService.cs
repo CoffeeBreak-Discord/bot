@@ -4,12 +4,12 @@ using CoffeeBreak.ThirdParty;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
 
-namespace CoffeeBreak.Services;
-public class CachingGiveawayService
+namespace CoffeeBreak.Services.Caching;
+public class GiveawayService
 {
     private DatabaseContext _db = new DatabaseContext();
     private DiscordShardedClient _client;
-    public CachingGiveawayService(DiscordShardedClient client)
+    public GiveawayService(DiscordShardedClient client)
     {
         _client = client;
         client.ShardReady += this.ShardReady;

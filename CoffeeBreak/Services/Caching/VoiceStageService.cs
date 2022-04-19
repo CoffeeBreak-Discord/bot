@@ -3,13 +3,13 @@ using Discord;
 using Discord.WebSocket;
 using StackExchange.Redis;
 
-namespace CoffeeBreak.Services;
-public class CachingVoiceStageService
+namespace CoffeeBreak.Services.Caching;
+public class VoiceStageService
 {
     private DiscordShardedClient _client;
     private IConnectionMultiplexer _cache;
 
-    public CachingVoiceStageService(DiscordShardedClient client, IConnectionMultiplexer cache)
+    public VoiceStageService(DiscordShardedClient client, IConnectionMultiplexer cache)
     {
         _client = client;
         _cache = cache;
