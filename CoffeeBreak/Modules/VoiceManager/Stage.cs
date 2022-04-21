@@ -1,3 +1,4 @@
+using CoffeeBreak.Function;
 using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
@@ -21,6 +22,20 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     {
         _client = client;
         _cache = cache;
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
+    [SlashCommand("setup", "Setup and check status of giveaway module.")]
+    public async Task SetupCommandAsync()
+    {
+        var setup = new SetupEmbedBuilder(this.Context, "Stage");
+
+        // Check giveaway channel
+        var checkRole = await _db.StageConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        if (checkRole == null) setup.SetStatus(false);
+        setup.AddField("role", $"Speaker Role: {(checkRole == null ? "No role" : $"<@&{checkRole.RoleID}>")}");
+
+        await this.RespondAsync(embed: setup.Build());
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]

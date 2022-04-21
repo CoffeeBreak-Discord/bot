@@ -17,6 +17,20 @@ public partial class RaffleGiveawayModule : InteractionModuleBase<ShardedInterac
     }
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
+    [SlashCommand("setup", "Setup and check status of giveaway module.")]
+    public async Task SetupCommandAsync()
+    {
+        var setup = new SetupEmbedBuilder(this.Context, "Giveaway", GiveawayManager.IconURL);
+
+        // Check giveaway channel
+        var checkChannel = await _db.GiveawayConfig.FirstOrDefaultAsync(x => x.GuildID == this.Context.Guild.Id);
+        if (checkChannel == null) setup.SetStatus(false);
+        setup.AddField("channel", $"Channel Location: {(checkChannel == null ? "No channel" : $"<#{checkChannel.ChannelID}>")}");
+
+        await this.RespondAsync(embed: setup.Build());
+    }
+
+    [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("start", "Start the giveaway.")]
     public async Task StartCommandAsync(
         [Summary(description: "Required role")] IRole? requiredRole = null)

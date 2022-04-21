@@ -1,6 +1,7 @@
 ﻿using CoffeeBreak.Models;
 using CoffeeBreak.ThirdParty;
 using CoffeeBreak.Services;
+using CoffeeBreak.Services.Caching;
 using Discord.WebSocket;
 using Discord.Interactions;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,9 +31,9 @@ public partial class Program
             // Invite to Guild message
             .AddSingleton<InviteToGuildService>()
             // Caching (Giveaway Modul)
-            .AddSingleton<CachingGiveawayService>()
+            .AddSingleton<GiveawayService>()
             // Caching (Voice Stage)
-            .AddSingleton<CachingVoiceStageService>();
+            .AddSingleton<VoiceStageService>();
     }
 
     private async void SetExtraStep(ServiceProvider build)
