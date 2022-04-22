@@ -20,6 +20,23 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
 # Set WORKDIR
 WORKDIR /app
 
+# Install dependencies & extra utility packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libopus0 \
+        libsodium23 \
+        tzdata \
+        procps \
+        iputils-ping \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get autoclean -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Link native dependencies
+RUN ln -sf /usr/lib/x86_64-linux-gnu/libopus.so.0 /app/libopus.so \
+    && ln -sf /usr/lib/x86_64-linux-gnu/libsodium.so.23 /app/libsodium.so
+
 ARG VERSION=nightly
 ARG COMMIT=Unknown
 ENV VERSION=${VERSION} \
