@@ -35,7 +35,7 @@ RUN apt-get update \
 
 # Link native dependencies
 RUN ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libopus.so \
-    && ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libsodium.so
+    && ln -sf $(ldconfig -p | grep libsodium | tr ' ' '\n' | grep /) /app/libsodium.so
 
 ARG VERSION=nightly
 ARG COMMIT=Unknown
