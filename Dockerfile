@@ -34,8 +34,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Link native dependencies
-RUN ln -sf /usr/lib/x86_64-linux-gnu/libopus.so.0 /app/libopus.so \
-    && ln -sf /usr/lib/x86_64-linux-gnu/libsodium.so.23 /app/libsodium.so
+RUN ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libopus.so \
+    && ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libsodium.so
 
 ARG VERSION=nightly
 ARG COMMIT=Unknown
