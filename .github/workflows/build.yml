@@ -78,5 +78,5 @@ jobs:
             VERSION=${{ steps.version.outputs.name }}
             COMMIT=${{ github.sha }}
             PROJECT_NAME=${{ matrix.project }}
-          cache-from: type=gha,mode=max
-          cache-to: type=gha,mode=max
+          cache-from: ${{ github.event_name == "release" && " " || "type=gha,mode=max" }}
+          cache-to: ${{ github.event_name == "release" && " " || "type=gha,mode=max" }}
