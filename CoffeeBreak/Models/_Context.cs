@@ -8,6 +8,7 @@ public class DatabaseContext : DbContext
     public DbSet<GiveawayConfig> GiveawayConfig => this.Set<GiveawayConfig>();
     public DbSet<GiveawayParticipant> GiveawayParticipant => this.Set<GiveawayParticipant>();
     public DbSet<StageConfig> StageConfig => this.Set<StageConfig>();
+    public DbSet<PollRunning> PollRunning => this.Set<PollRunning>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
     {
@@ -23,5 +24,8 @@ public class DatabaseContext : DbContext
         Models.WarnList.Relations(model);
         Models.GiveawayRunning.Relations(model);
         Models.GiveawayConfig.Relations(model);
+        Models.GiveawayParticipant.Relations(model);
+        Models.StageConfig.Relations(model);
+        Models.PollRunning.Relations(model);
     }
 }
