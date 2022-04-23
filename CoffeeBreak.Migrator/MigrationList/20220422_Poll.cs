@@ -13,6 +13,7 @@ public class _20220422_Poll : Migration
             .WithColumn("MessageID").AsInt64().NotNullable()
             .WithColumn("PollName").AsString().NotNullable()
             .WithColumn("PollChoice").AsCustom("LONGTEXT").NotNullable()
+            .WithColumn("ChoiceCount").AsInt32().NotNullable()
             .WithColumn("ExpiredDate").AsDateTime().NotNullable()
             .WithColumn("IsExpired").AsBoolean().WithDefaultValue(false).NotNullable();
     }

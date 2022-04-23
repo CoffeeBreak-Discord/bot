@@ -11,6 +11,7 @@ public class PollRunning
     public ulong UserID { get; set; } = 0;
     public string PollName { get; set; } = null!;
     public string PollChoice { get; set; } = null!;
+    public int ChoiceCount { get; set; } = 0;
     public DateTime ExpiredDate { get; set; }
     public bool IsExpired { get; set; }
 
