@@ -22,10 +22,10 @@ public class LoggingService
                 Logging.Info(msg.Message, msg.Source);
                 break;
             case LogSeverity.Warning:
-                Logging.Warning($"{msg.Message}", msg.Source);
+                Logging.Warning($"{msg.Exception.Message}, reason: {(msg.Exception.InnerException != null ? msg.Exception.InnerException.Message : "unknown")}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
                 break;
             case LogSeverity.Error:
-                Logging.Error($"{msg.Exception.Message ?? msg.Message}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
+                Logging.Error($"{msg.Exception.Message}, reason: {(msg.Exception.InnerException != null ? msg.Exception.InnerException.Message : "unknown")}\n{msg.Exception.StackTrace ?? ""}", msg.Source);
                 break;
         }
         return Task.CompletedTask;
