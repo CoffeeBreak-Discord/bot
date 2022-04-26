@@ -2,6 +2,7 @@ using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeBreak.Function;
 public class PollManager
@@ -83,8 +84,24 @@ public class PollManager
             .WithDescription(poll.PollName)
             .AddField("Creator", $"<@!{poll.UserID}>", true)
             .AddField("Entries", "0 people", true)
-            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true)
-            .AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
+            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true);
+        embed.AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
         return embed.Build();
+    }
+
+    public static async Task UpdateStats(DatabaseContext db, ISocketMessageChannel channel, PollRunning data)
+    {
+        var message = await channel.GetMessageAsync(data.MessageID);
+        var embedBuilder = message.Embeds.First().ToEmbedBuilder();
+
+        // Get count
+        int entries = await db.PollParticipant.Include(e => e.PollRunning).Where(e => e.PollRunning == data).CountAsync();
+
+        // Find index for entries
+        var index = embedBuilder.Fields.FindIndex(x => x.Name == "Entries");
+        embedBuilder.Fields[index].Value = $"{entries} people{(entries > 1 ? "s" : "")}";
+        
+        // Modify the message
+        await channel.ModifyMessageAsync(data.MessageID, Message => Message.Embed = embedBuilder.Build());
     }
 }

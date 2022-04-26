@@ -10,6 +10,7 @@ public class DatabaseContext : DbContext
     public DbSet<StageConfig> StageConfig => this.Set<StageConfig>();
     public DbSet<PollRunning> PollRunning => this.Set<PollRunning>();
     public DbSet<PollChoice> PollChoice => this.Set<PollChoice>();
+    public DbSet<PollParticipant> PollParticipant => this.Set<PollParticipant>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
     {
@@ -29,5 +30,6 @@ public class DatabaseContext : DbContext
         Models.StageConfig.Relations(model);
         Models.PollRunning.Relations(model);
         Models.PollChoice.Relations(model);
+        Models.PollParticipant.Relations(model);
     }
 }

@@ -6,6 +6,7 @@ public class PollChoice
 {
     public ulong ID { get; set; } = 0;
     public virtual PollRunning PollRunning { get; set; } = default!;
+    public virtual ICollection<PollParticipant> PollParticipant { get; set; } = default!;
     public string ChoiceValue { get; set; } = null!;
 
     public static void Relations(ModelBuilder model)

@@ -16,21 +16,22 @@ public class _20220422_Poll : Migration
             .WithColumn("ExpiredDate").AsDateTime().NotNullable()
             .WithColumn("IsExpired").AsBoolean().WithDefaultValue(false).NotNullable();
 
-        this.Create.Table("PollParticipant")
-            .WithColumn("ID").AsInt64().PrimaryKey().Identity().NotNullable()
-            .WithColumn("PollRunningID").AsInt64().NotNullable().ForeignKey("PollRunning", "ID")
-            .WithColumn("UserID").AsInt64().NotNullable();
-
         this.Create.Table("PollChoice")
             .WithColumn("ID").AsInt64().PrimaryKey().Identity().NotNullable()
             .WithColumn("PollRunningID").AsInt64().NotNullable().ForeignKey("PollRunning", "ID")
             .WithColumn("ChoiceValue").AsString().NotNullable();
+
+        this.Create.Table("PollParticipant")
+            .WithColumn("ID").AsInt64().PrimaryKey().Identity().NotNullable()
+            .WithColumn("PollChoiceID").AsInt64().NotNullable().ForeignKey("PollChoice", "ID")
+            .WithColumn("PollRunningID").AsInt64().NotNullable().ForeignKey("PollRunning", "ID")
+            .WithColumn("UserID").AsInt64().NotNullable();
     }
 
     public override void Down()
     {
-        this.Delete.Table("PollChoice");
         this.Delete.Table("PollParticipant");
+        this.Delete.Table("PollChoice");
         this.Delete.Table("PollRunning");
     }
 }
