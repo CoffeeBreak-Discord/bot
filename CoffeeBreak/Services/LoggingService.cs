@@ -39,7 +39,10 @@ public class LoggingService
         Logging.Info($"{ctx.User.Id}[{ctx.Guild.Id}] executing {execName}", "SlashCommand");
 
         if (result.Error != null)
+        {
+            if (result is PreconditionResult) return ctx.Interaction.RespondAsync(result.ErrorReason);
             Logging.Error($"Something wrong when executing /{cmdInfo.Name}\n{result.ErrorReason}", "SlashCommand");
+        }
 
         return Task.CompletedTask;
     }
