@@ -15,11 +15,8 @@ public partial class PollModule
             ChoiceCount = 1,
             GuildID = this.Context.Guild.Id,
             UserID = this.Context.User.Id,
-            PollName = modal.PollName,
-            PollChoice = modal.Choice
+            PollName = modal.PollName
         };
-        
-        Console.WriteLine(PollManager.SplitStringToMenu(data.PollChoice));
         
         // // Send message to channel
         // var message = await this.Context.Channel.SendMessageAsync("Creating poll..");
@@ -40,9 +37,7 @@ public partial class PollModule
             ChoiceCount = int.Parse(modal.CountChoice),
             GuildID = this.Context.Guild.Id,
             UserID = this.Context.User.Id,
-            PollName = modal.PollName,
-            PollChoice = modal.Choice
-
+            PollName = modal.PollName
         };
 
         // Send message to channel
