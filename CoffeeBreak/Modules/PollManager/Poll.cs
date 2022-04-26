@@ -18,14 +18,22 @@ public partial class PollManagerModule : InteractionModuleBase<ShardedInteractio
 
     public enum PollChoiceMode
     {
-        Single, Multiple
+        [ChoiceDisplay("Single Choice")] Single,
+        [ChoiceDisplay("Multiple Choice")] Multiple
     }
-
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("create", "Create the poll")]
     public async Task StartCommandAsync(PollChoiceMode mode = PollChoiceMode.Single)
     {
-        await this.Context.Interaction.RespondWithModalAsync<PollManager.SingleChoiceModal>("modal_poll:single");
+        switch (mode)
+        {
+            case PollChoiceMode.Single:
+                await this.Context.Interaction.RespondWithModalAsync<PollManager.SingleChoiceModal>("modal_poll:single");
+                break;
+            case PollChoiceMode.Multiple:
+                await this.Context.Interaction.RespondWithModalAsync<PollManager.MultipleChoiceModal>("modal_poll:multiple");
+                break;
+        }
     }
 }

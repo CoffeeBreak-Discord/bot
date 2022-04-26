@@ -12,13 +12,20 @@ public class PollManager
         [ModalTextInput("poll_name", placeholder: "Ex: What's your favorite fruit?")]
         public string Name { get; set; } = default!;
 
-        [InputLabel("How long this giveaway?")]
+        [InputLabel("How long this poll?")]
         [ModalTextInput("poll_duration", placeholder: "Ex: 3d 4h 5m 10s")]
         public string Duration { get; set; } = default!;
 
-        [InputLabel("Some note?")]
-        [ModalTextInput("poll_choice", TextInputStyle.Paragraph, "Separate the choice with new line", 1, 255)]
+        [InputLabel("Insert your option here")]
+        [ModalTextInput("poll_choice", TextInputStyle.Paragraph, "Separate the option with new line", 1, 255)]
         public string Choice { get; set; } = default!;
+    }
+
+    public class MultipleChoiceModal : SingleChoiceModal
+    {
+        [InputLabel("How many choice user can choice")]
+        [ModalTextInput("poll_choice_count", placeholder: "Ex: 3")]
+        public string Count { get; set; } = default!;
     }
 
     public enum PollChoiceType
