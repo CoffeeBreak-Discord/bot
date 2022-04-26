@@ -13,7 +13,7 @@ public class PollRunning
     public string PollChoice { get; set; } = null!;
     public int ChoiceCount { get; set; } = 0;
     public DateTime ExpiredDate { get; set; }
-    public bool IsExpired { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public bool IsExpired { get; set; }
 
     public static void Relations(ModelBuilder model)
     {

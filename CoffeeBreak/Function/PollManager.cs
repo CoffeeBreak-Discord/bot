@@ -27,5 +27,29 @@ public class PollManager
     public class PollMultipleChoiceModal : PollTemplateModal, IModal
     {
         public string Title => "Make a multiple poll choice!";
+
+        [InputLabel("How much user can choose.")]
+        [ModalTextInput("poll_count_choice", placeholder: "Ex: 3d 4h 5m 10s")]
+        public string CountChoice { get; set; } = default!;
+    }
+
+    public enum PollChoiceType
+    {
+        Single, Multiple
+    }
+
+    public static string[] SplitStringToMenu(string text) => text.Split("\n");
+
+    public static SelectMenuBuilder GenerateMenu(int id, PollChoiceType type, string[] option, int count = 1)
+    {
+        var builder = new SelectMenuBuilder()
+            .WithPlaceholder("Select an option.")
+            .WithCustomId($"menu_poll:{id}")
+            .WithMinValues(1);
+        
+        if (type == PollChoiceType.Multiple) builder.WithMaxValues(count);
+        else builder.WithMaxValues(1);
+
+        return builder;
     }
 }

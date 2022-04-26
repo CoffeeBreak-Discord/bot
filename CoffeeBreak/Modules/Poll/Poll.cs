@@ -1,4 +1,5 @@
 using CoffeeBreak.Function;
+using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -8,6 +9,7 @@ namespace CoffeeBreak.Modules;
 public partial class PollModule : InteractionModuleBase<ShardedInteractionContext>
 {
     private DiscordShardedClient _client;
+    private DatabaseContext _db = new DatabaseContext();
 
     public enum PollStartMode
     {
