@@ -11,6 +11,7 @@ on:
       - master
     paths:
       - "Dockerfile"
+      - ".github/workflows/build.yml"
 
 jobs:
   build:
@@ -24,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check Out Repo
-        uses: actions/checkout@v3.0.1
+        uses: actions/checkout@v3.0.2
 
       #- name: Set up QEMU (We don't need QEMU, because we don't build images for platforms other than linux/amd64, which is our current native arch in our infra
       #  uses: docker/setup-qemu-action@v1.2.0
@@ -78,5 +79,6 @@ jobs:
             VERSION=${{ steps.version.outputs.name }}
             COMMIT=${{ github.sha }}
             PROJECT_NAME=${{ matrix.project }}
+          no-cache: ${{ github.event_name == 'release' }}
           cache-from: type=gha,mode=max
           cache-to: type=gha,mode=max

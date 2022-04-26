@@ -25,8 +25,25 @@ ARG COMMIT=Unknown
 ENV VERSION=${VERSION} \
     COMMIT=${COMMIT}
 
+# Install dependencies & extra utility packages
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libopus0 \
+        libsodium23 \
+        tzdata \
+        procps \
+        iputils-ping \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get autoclean -y \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the built app from build stage
 COPY --from=build-stage /build .
+
+# Link native dependencies
+RUN ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libopus.so \
+    && ln -sf $(ldconfig -p | grep libsodium | tr ' ' '\n' | grep /) /app/libsodium.so
 
 # Now we can run the app with DOCKER CMD
 ENTRYPOINT ["/app/run"]
