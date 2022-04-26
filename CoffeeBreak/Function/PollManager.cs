@@ -1,9 +1,13 @@
+using CoffeeBreak.Models;
 using Discord;
 using Discord.Interactions;
+using Discord.WebSocket;
 
 namespace CoffeeBreak.Function;
 public class PollManager
 {
+    public static string IconURL = "https://media.discordapp.net/attachments/946050537814655046/968628429467549706/unknown.png?width=288&height=288";
+
     public class SingleChoiceModal : IModal
     {
         public string Title => "Make a single poll choice!";
@@ -33,9 +37,7 @@ public class PollManager
         Single, Multiple
     }
 
-    public static string[] SplitStringToMenu(string text) => text.Split("\n");
-
-    public static SelectMenuBuilder GenerateMenu(int id, PollChoiceType type, string[] option, int count = 1)
+    public static MessageComponent GenerateMenu(ulong id, PollChoiceType type, List<PollChoice> option, int count = 1)
     {
         var builder = new SelectMenuBuilder()
             .WithPlaceholder("Select an option.")
@@ -45,6 +47,44 @@ public class PollManager
         if (type == PollChoiceType.Multiple) builder.WithMaxValues(count);
         else builder.WithMaxValues(1);
 
-        return builder;
+        foreach (PollChoice choice in option)
+        {
+            builder.AddOption(choice.ChoiceValue, choice.ID.ToString());
+        }
+
+        return new ComponentBuilder().WithSelectMenu(builder).Build();
+    }
+
+    public static async Task<List<PollChoice>> InsertToPollChoice(DatabaseContext db, PollRunning poller, string[] option)
+    {
+        var dataChoice = new List<PollChoice>();
+        foreach (string choice in option)
+        {
+            dataChoice.Add(new PollChoice()
+            {
+                PollRunning = poller,
+                ChoiceValue = choice
+            });
+        }
+        await db.PollChoice.AddRangeAsync(dataChoice.ToArray());
+
+        return dataChoice;
+    }
+
+    public static Embed StartEmbedBuilder(PollRunning poll, DiscordShardedClient client)
+    {
+        var endTime = new DiscordTimestamp(poll.ExpiredDate);
+        var embed = new EmbedBuilder()
+            .WithColor(Color.Green)
+            .WithTitle("Poll Started!")
+            .WithThumbnailUrl(IconURL)
+            .WithCurrentTimestamp()
+            .WithFooter($"ID: {poll.ID}", client.CurrentUser.GetAvatarUrl())
+            .WithDescription(poll.PollName)
+            .AddField("Creator", $"<@!{poll.UserID}>", true)
+            .AddField("Entries", "0 people", true)
+            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true)
+            .AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
+        return embed.Build();
     }
 }
