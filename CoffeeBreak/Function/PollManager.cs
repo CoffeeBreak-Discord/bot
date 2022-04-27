@@ -84,8 +84,8 @@ public class PollManager
             .WithDescription(poll.PollName)
             .AddField("Creator", $"<@!{poll.UserID}>", true)
             .AddField("Entries", "0 people", true)
-            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true);
-        embed.AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
+            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true)
+            .AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
         return embed.Build();
     }
 
