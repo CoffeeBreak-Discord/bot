@@ -12,13 +12,13 @@ public partial class RaffleGiveawayModule
         var data = new PollRunning()
         {
             GuildID = this.Context.Guild.Id,
-            UserID = this.Context.User.Id
+            UserID = this.Context.User.Id,
+            ChoiceCount = 1
         };
         string choiceStr = "";
 
         if (singleChoice != null)
         {
-            data.ChoiceCount = 1;
             data.ExpiredDate = new HumanizeDuration(singleChoice.Duration).ToDateTime();
             data.PollName = singleChoice.Name;
             choiceStr = singleChoice.Choice;
@@ -28,13 +28,16 @@ public partial class RaffleGiveawayModule
             data.ChoiceCount = int.Parse(multipleChoice.Count);
             data.ExpiredDate = new HumanizeDuration(multipleChoice.Duration).ToDateTime();
             data.PollName = multipleChoice.Name;
+            data.IsOptionsRequired = int.Parse(multipleChoice.IsOptionsRequired) == 1;
             choiceStr = multipleChoice.Choice;
         }
 
         string[] choiceList = choiceStr.Trim().Split("\n");
         if (choiceList.Count() < 2 || (multipleChoice != null && choiceList.Count() < (data.ChoiceCount + 1)))
         {
-            await this.RespondAsync($"You can't make a poll if the choices are under {(multipleChoice != null ? data.ChoiceCount : 2)} items.", ephemeral: true);
+            await this.RespondAsync(
+                $"You can't make a poll if the choices are under {(multipleChoice != null ? data.ChoiceCount : 2)} items.",
+                ephemeral: true);
             return;
         }
 
@@ -80,8 +83,8 @@ public partial class RaffleGiveawayModule
             return;
         }
 
-        // If the number of choices is'nt sufficient
-        if (choice.Count() != data.ChoiceCount)
+        // If the number of choices isn't sufficient when options is required
+        if (data.IsOptionsRequired && choice.Count() != data.ChoiceCount)
         {
             await this.RespondAsync("The number of your selections is not sufficient to record.", ephemeral: true);
             return;

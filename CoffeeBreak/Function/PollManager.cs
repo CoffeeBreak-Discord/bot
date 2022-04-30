@@ -28,7 +28,7 @@ public class PollManager
 
     public class MultipleChoiceModal : IModal
     {
-        public string Title => "Make a single poll choice!";
+        public string Title => "Make a multiple poll choice!";
 
         [InputLabel("Insert your poll name")]
         [ModalTextInput("poll_name", placeholder: "Ex: What's your favorite fruit?")]
@@ -41,6 +41,10 @@ public class PollManager
         [InputLabel("How many choice user can choice")]
         [ModalTextInput("poll_choice_count", placeholder: "Ex: 3")]
         public string Count { get; set; } = default!;
+
+        [InputLabel("Are all options required to choose? (1/0)")]
+        [ModalTextInput("poll_is_options_required", placeholder: "1 = True / 0 = False")]
+        public string IsOptionsRequired { get; set; } = default!;
 
         [InputLabel("Insert your option here")]
         [ModalTextInput("poll_choice", TextInputStyle.Paragraph, "Separate the option with new line", 1, 255)]
@@ -57,10 +61,8 @@ public class PollManager
         var builder = new SelectMenuBuilder()
             .WithPlaceholder("Select an option.")
             .WithCustomId($"menu_poll:{id}")
-            .WithMinValues(1);
-
-        if (type == PollChoiceType.Multiple) builder.WithMaxValues(count);
-        else builder.WithMaxValues(1);
+            .WithMinValues(1)
+            .WithMaxValues(count);
 
         foreach (PollChoice choice in option)
         {
@@ -98,7 +100,7 @@ public class PollManager
             .WithDescription(poll.PollName)
             .AddField("Creator", $"<@!{poll.UserID}>", true)
             .AddField("Entries", "0 people", true)
-            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")}", true)
+            .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")} ({(poll.IsOptionsRequired ? "Required" : "Optional")})", true)
             .AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
         return embed.Build();
     }

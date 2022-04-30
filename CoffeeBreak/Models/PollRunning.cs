@@ -11,8 +11,9 @@ public class PollRunning
     public ulong UserID { get; set; } = 0;
     public string PollName { get; set; } = null!;
     public int ChoiceCount { get; set; } = 0;
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public bool IsOptionsRequired { get; set; } = false;
     public DateTime ExpiredDate { get; set; }
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public bool IsExpired { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public bool IsExpired { get; set; } = false;
     public virtual ICollection<PollParticipant> PollParticipant { get; set; } = default!;
     public virtual ICollection<PollChoice> PollChoice { get; set; } = default!;
 
