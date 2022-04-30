@@ -10,6 +10,7 @@ public class _20220422_Poll : Migration
             .WithColumn("ID").AsInt64().PrimaryKey().Identity().NotNullable()
             .WithColumn("GuildID").AsInt64().NotNullable()
             .WithColumn("UserID").AsInt64().NotNullable()
+            .WithColumn("ChannelID").AsInt64().NotNullable()
             .WithColumn("MessageID").AsInt64().NotNullable()
             .WithColumn("PollName").AsString().NotNullable()
             .WithColumn("ChoiceCount").AsInt32().NotNullable()

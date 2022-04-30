@@ -1,4 +1,3 @@
-using CoffeeBreak.Function;
 using CoffeeBreak.Models;
 using CoffeeBreak.ThirdParty;
 using Discord.WebSocket;
@@ -37,7 +36,7 @@ public class PollService
         if (now % interval == 0) await this.FetchDatabaseAsync();
 
         // Last step, check giveaway cache
-        await this.CheckGiveawayAsync();
+        await this.CheckPollAsync();
 
         // And it's loop endless...
     }
@@ -46,9 +45,27 @@ public class PollService
     {
         // Get data that expired in this day
         DateTime endDate = DateTime.Now.AddDays(1);
+        var dataFetched = await _db.PollRunning
+            .Where(x => x.IsExpired == false && x.ExpiredDate < endDate)
+            .ToArrayAsync();
+        if (dataFetched.Count() == 0) return;
+        foreach (var data in dataFetched)
+        {
+            // If the poll more than State.MinuteInterval, skip
+            TimeSpan ts = data.ExpiredDate - DateTime.Now;
+            int minDiff = (int) Math.Floor(ts.TotalMinutes);
+            int interval = Global.State.Giveaway.MinuteInterval;
+            if (minDiff >= interval) continue;
+
+            // Insert to cache
+            if (Global.State.Poll.PollActive.Where(x => x.Key == data.ID).Count() > 0) continue;
+
+            Logging.Info($"Add ID:{data.ID} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
+            Global.State.Poll.PollActive.Add(data.ID, data.ExpiredDate);
+        }
     }
 
-    private async Task CheckGiveawayAsync()
+    private async Task CheckPollAsync()
     {
         //
     }

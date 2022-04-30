@@ -1,4 +1,5 @@
 using CoffeeBreak.Models;
+using CoffeeBreak.ThirdParty;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -74,6 +75,7 @@ public class PollManager
 
     public static async Task<List<PollChoice>> InsertToPollChoice(DatabaseContext db, PollRunning poller, string[] option)
     {
+        // Insert to database
         var dataChoice = new List<PollChoice>();
         foreach (string choice in option)
         {
@@ -84,6 +86,17 @@ public class PollManager
             });
         }
         await db.PollChoice.AddRangeAsync(dataChoice.ToArray());
+
+        // If the giveaway less that State.MinuteInterval, proceed to cache
+        TimeSpan ts = poller.ExpiredDate - DateTime.Now;
+        int minDiff = (int) Math.Floor(ts.TotalMinutes);
+        int interval = Global.State.Poll.MinuteInterval;
+        if (interval >= minDiff)
+        {
+
+            Logging.Info($"Add ID:{poller.ID} to State.Giveaway.GiveawayActive because the Giveaway less than {interval} minutes.", "GAPool");
+            Global.State.Poll.PollActive.Add(poller.ID, poller.ExpiredDate);
+        }
 
         return dataChoice;
     }

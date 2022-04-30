@@ -13,6 +13,7 @@ public partial class RaffleGiveawayModule
         {
             GuildID = this.Context.Guild.Id,
             UserID = this.Context.User.Id,
+            ChannelID = this.Context.Channel.Id,
             ChoiceCount = 1
         };
         string choiceStr = "";

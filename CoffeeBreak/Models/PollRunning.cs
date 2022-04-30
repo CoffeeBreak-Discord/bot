@@ -7,6 +7,7 @@ public class PollRunning
 {
     public ulong ID { get; set; } = 0;
     public ulong GuildID { get; set; } = 0;
+    public ulong ChannelID { get; set; } = 0;
     public ulong MessageID { get; set; } = 0;
     public ulong UserID { get; set; } = 0;
     public string PollName { get; set; } = null!;
