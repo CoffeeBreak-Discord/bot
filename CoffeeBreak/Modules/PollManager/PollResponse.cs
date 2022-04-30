@@ -7,22 +7,34 @@ using Microsoft.EntityFrameworkCore;
 namespace CoffeeBreak.Modules;
 public partial class RaffleGiveawayModule
 {
-    [ModalInteraction("modal_poll:single", true)]
-    public async Task ModalSingleResponseAsync(PollManager.SingleChoiceModal modal)
+    private async Task ModalResponseAsync(PollManager.SingleChoiceModal? singleChoice = null, PollManager.MultipleChoiceModal? multipleChoice = null)
     {
         var data = new PollRunning()
         {
-            ChoiceCount = 1,
-            ExpiredDate = new HumanizeDuration(modal.Duration).ToDateTime(),
             GuildID = this.Context.Guild.Id,
-            PollName = modal.Name,
             UserID = this.Context.User.Id
         };
+        string choiceStr = "";
 
-        string[] choiceList = modal.Choice.Trim().Split("\n");
-        if (choiceList.Count() < 2)
+        if (singleChoice != null)
         {
-            await this.RespondAsync("You can't make a poll if the choices are under two items.", ephemeral: true);
+            data.ChoiceCount = 1;
+            data.ExpiredDate = new HumanizeDuration(singleChoice.Duration).ToDateTime();
+            data.PollName = singleChoice.Name;
+            choiceStr = singleChoice.Choice;
+        }
+        else if (multipleChoice != null)
+        {
+            data.ChoiceCount = int.Parse(multipleChoice.Count);
+            data.ExpiredDate = new HumanizeDuration(multipleChoice.Duration).ToDateTime();
+            data.PollName = multipleChoice.Name;
+            choiceStr = multipleChoice.Choice;
+        }
+
+        string[] choiceList = choiceStr.Trim().Split("\n");
+        if (choiceList.Count() < 2 || (multipleChoice != null && choiceList.Count() < (data.ChoiceCount + 1)))
+        {
+            await this.RespondAsync($"You can't make a poll if the choices are under {(multipleChoice != null ? data.ChoiceCount : 2)} items.", ephemeral: true);
             return;
         }
 
@@ -48,11 +60,11 @@ public partial class RaffleGiveawayModule
             ephemeral: true);
     }
 
+    [ModalInteraction("modal_poll:single", true)]
+    public async Task ModalSingleResponseAsync(PollManager.SingleChoiceModal modal) => await this.ModalResponseAsync(singleChoice: modal);
+
     [ModalInteraction("modal_poll:multiple", true)]
-    public async Task ModalMultipleResponseAsync(PollManager.MultipleChoiceModal modal)
-    {
-        await this.RespondAsync(modal.Name + " Multiple");
-    }
+    public async Task ModalMultipleResponseAsync(PollManager.MultipleChoiceModal modal) => await this.ModalResponseAsync(multipleChoice: modal);
 
     [ComponentInteraction("menu_poll:*", true)]
     public async Task MenuChoiceResponseAsync(string ids, string[] choice)

@@ -24,7 +24,8 @@ public partial class PollManagerModule : InteractionModuleBase<ShardedInteractio
 
     [RequireUserPermission(GuildPermission.ManageGuild)]
     [SlashCommand("create", "Create the poll")]
-    public async Task StartCommandAsync(PollChoiceMode mode = PollChoiceMode.Single)
+    public async Task StartCommandAsync(
+        [Summary(description: "Kinds of choices")] PollChoiceMode mode = PollChoiceMode.Single)
     {
         switch (mode)
         {

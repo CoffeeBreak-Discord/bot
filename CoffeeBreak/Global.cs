@@ -21,6 +21,31 @@ public class Global
             int.Parse(Environment.GetEnvironmentVariable("DISCORD_SHARD_COUNT") ?? "1");
     }
 
+    public class State
+    {
+        public class Giveaway
+        {
+            /// <summary>Interval for cache giveaway data in minute</summary>
+            public static readonly int MinuteInterval = 5;
+            /// <summary>
+            /// Caching for Giveaway. Will updated every <see cref="MinuteInterval"/> that
+            /// updated in each minutes.
+            /// </summary>
+            public static Dictionary<ulong, DateTime> GiveawayActive = new Dictionary<ulong, DateTime>();
+        }
+
+        public class Poll
+        {
+            /// <summary>Interval for cache giveaway data in minute</summary>
+            public static readonly int MinuteInterval = 5;
+            /// <summary>
+            /// Caching for Poll. Will updated every <see cref="MinuteInterval"/> that
+            /// updated in each minutes.
+            /// </summary>
+            public static Dictionary<ulong, DateTime> PollActive = new Dictionary<ulong, DateTime>();
+        }
+    }
+
     public class Presence
     {
         public static readonly string[] Status =
@@ -39,22 +64,4 @@ public class Global
         new ColorPallete.RGBPlate(238, 195, 115),
         new ColorPallete.RGBPlate(244, 223, 186)
     });
-
-    public class State
-    {
-        public class Giveaway
-        {
-            /// <summary>Interval for cache giveaway data in minute</summary>
-            public static readonly int MinuteInterval = 5;
-
-            /// <summary>
-            /// Caching for Giveaway. Will updated every <see cref="MinuteInterval"/> that
-            /// updated in each minutes.
-            /// <example><code>
-            /// GiveawayActive("guildID:channelID:messageID", expiredDate);
-            /// </code></example>
-            /// </summary>
-            public static Dictionary<ulong, DateTime> GiveawayActive = new Dictionary<ulong, DateTime>();
-        }
-    }
 }
