@@ -99,7 +99,7 @@ public class PollManager
             .WithThumbnailUrl(IconURL)
             .WithCurrentTimestamp()
             .WithFooter($"ID: {poll.ID}", client.CurrentUser.GetAvatarUrl())
-            .WithDescription(poll.PollName)
+            .AddField("Poll Name", poll.PollName)
             .AddField("Creator", $"<@!{poll.UserID}>", true)
             .AddField("Entries", "0 vote", true)
             .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")} ({(poll.IsOptionsRequired ? "Required" : "Optional")})", true)
