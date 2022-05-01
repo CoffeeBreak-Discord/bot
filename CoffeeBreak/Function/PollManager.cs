@@ -129,7 +129,7 @@ public class PollManager
         var data = await db.PollRunning
             .Include(m => m.PollChoice).Include(m => m.PollParticipant).ThenInclude(m => m.PollChoice)
             .FirstOrDefaultAsync(x => x.ID == id);
-        var embed = message.Embeds.First().ToEmbedBuilder();
+        var embed = message.Embeds.First().ToEmbedBuilder().WithColor(Color.Red);
 
         // Get poll count
         int pollSize = data!.PollParticipant.Count;
@@ -141,9 +141,9 @@ public class PollManager
         }
         
         if (pollSize > 0)
-            embed.AddField("Result", isCanceled ? "Canceled" : printEmbed.TrimEnd());
+            embed.AddField("Result", printEmbed.TrimEnd());
         else
-            embed.AddField("Result", "No Participant");
+            embed.AddField("Result", isCanceled ? "Canceled" : "No Participant");
 
         // Modify message
         var msgModifed = await channel.ModifyMessageAsync(message.Id, Message =>
