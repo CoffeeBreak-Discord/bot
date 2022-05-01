@@ -97,6 +97,7 @@ public class GiveawayService
                 Logging.Warning($"Invalid giveaway from ID:{giveaway.Key}. Removing from database.", "GAPool");
                 Global.State.Giveaway.GiveawayActive.Remove(giveaway.Key);
 
+                // TODO: Change IsExpired to false, don't delete
                 if (data == null) continue;
                 if (data.GiveawayParticipant != null && data.GiveawayParticipant.Count() > 0)
                     _db.GiveawayParticipant.RemoveRange(data.GiveawayParticipant);

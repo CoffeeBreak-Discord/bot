@@ -33,7 +33,9 @@ public partial class Program
             // Caching (Giveaway Modul)
             .AddSingleton<GiveawayService>()
             // Caching (Voice Stage)
-            .AddSingleton<VoiceStageService>();
+            .AddSingleton<VoiceStageService>()
+            // Caching (Poll Module)
+            .AddSingleton<PollService>();
     }
 
     private async void SetExtraStep(ServiceProvider build)

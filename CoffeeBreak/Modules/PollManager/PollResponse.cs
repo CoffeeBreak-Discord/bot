@@ -41,6 +41,11 @@ public partial class RaffleGiveawayModule
                 ephemeral: true);
             return;
         }
+        if (choiceList.Count() > 25)
+        {
+            await this.RespondAsync("You can't make a poll if the choices are above 25 items.", ephemeral: true);
+            return;
+        }
 
         // Save message ID and insert to database
         var message = await this.Context.Channel.SendMessageAsync("Creating poll...");
@@ -50,6 +55,16 @@ public partial class RaffleGiveawayModule
         // Insert data to PollChoice
         var dataChoice = await PollManager.InsertToPollChoice(_db, data, choiceList);
         await _db.SaveChangesAsync();
+
+        // If the giveaway less that State.MinuteInterval, proceed to cache
+        TimeSpan ts = data.ExpiredDate - DateTime.Now;
+        int minDiff = (int) Math.Floor(ts.TotalMinutes);
+        int interval = Global.State.Poll.MinuteInterval;
+        if (interval >= minDiff)
+        {
+            Logging.Info($"Add ID:{data.ID} to State.Poll.PollActive because the Poll less than {interval} minutes.", "PollPool");
+            Global.State.Poll.PollActive.Add(data.ID, data.ExpiredDate);
+        }
 
         // Generate poll
         await this.Context.Channel.ModifyMessageAsync(message.Id, Message =>

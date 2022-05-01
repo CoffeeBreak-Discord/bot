@@ -87,17 +87,6 @@ public class PollManager
         }
         await db.PollChoice.AddRangeAsync(dataChoice.ToArray());
 
-        // If the giveaway less that State.MinuteInterval, proceed to cache
-        TimeSpan ts = poller.ExpiredDate - DateTime.Now;
-        int minDiff = (int) Math.Floor(ts.TotalMinutes);
-        int interval = Global.State.Poll.MinuteInterval;
-        if (interval >= minDiff)
-        {
-
-            Logging.Info($"Add ID:{poller.ID} to State.Giveaway.GiveawayActive because the Giveaway less than {interval} minutes.", "GAPool");
-            Global.State.Poll.PollActive.Add(poller.ID, poller.ExpiredDate);
-        }
-
         return dataChoice;
     }
 
@@ -112,7 +101,7 @@ public class PollManager
             .WithFooter($"ID: {poll.ID}", client.CurrentUser.GetAvatarUrl())
             .WithDescription(poll.PollName)
             .AddField("Creator", $"<@!{poll.UserID}>", true)
-            .AddField("Entries", "0 people", true)
+            .AddField("Entries", "0 vote", true)
             .AddField("Choice Count", $"{poll.ChoiceCount} Option{(poll.ChoiceCount > 1 ? "s" : "")} ({(poll.IsOptionsRequired ? "Required" : "Optional")})", true)
             .AddField("End Time", $"{endTime.Relative()} ({endTime.LongDateTime()})");
         return embed.Build();
@@ -124,13 +113,57 @@ public class PollManager
         var embedBuilder = message.Embeds.First().ToEmbedBuilder();
 
         // Get count
-        int entries = await db.PollParticipant.Include(e => e.PollRunning).Where(e => e.PollRunning == data).CountAsync();
+        int votes = await db.PollParticipant.Include(e => e.PollRunning).Where(e => e.PollRunning == data).CountAsync();
 
         // Find index for entries
         var index = embedBuilder.Fields.FindIndex(x => x.Name == "Entries");
-        embedBuilder.Fields[index].Value = $"{entries} people{(entries > 1 ? "s" : "")}";
+        embedBuilder.Fields[index].Value = $"{votes} vote{(votes > 1 ? "s" : "")}";
         
         // Modify the message
         await channel.ModifyMessageAsync(data.MessageID, Message => Message.Embed = embedBuilder.Build());
+    }
+
+    public static async Task StopPollAsync(SocketGuild guild, SocketTextChannel channel, IMessage message, DatabaseContext db, ulong id, bool isCanceled = false)
+    {
+        // Recursing include
+        var data = await db.PollRunning
+            .Include(m => m.PollChoice).Include(m => m.PollParticipant).ThenInclude(m => m.PollChoice)
+            .FirstOrDefaultAsync(x => x.ID == id);
+        var embed = message.Embeds.First().ToEmbedBuilder();
+
+        // Get poll count
+        int pollSize = data!.PollParticipant.Count;
+        string printEmbed = "";
+        foreach (var choice in data!.PollChoice)
+        {
+            int count = choice.PollParticipant == null ? 0 : choice.PollParticipant.Where(x => x.PollChoice.ID == choice.ID).Count();
+            printEmbed += $"• {choice.ChoiceValue} - {count} ({(((double)count / pollSize) * 100).ToString("0.00")}%)\n";
+        }
+        
+        if (pollSize > 0)
+            embed.AddField("Result", isCanceled ? "Canceled" : printEmbed.TrimEnd());
+        else
+            embed.AddField("Result", "No Participant");
+
+        // Modify message
+        var msgModifed = await channel.ModifyMessageAsync(message.Id, Message =>
+        {
+            Message.Embed = embed.Build();
+            Message.Components = null;
+        });
+
+        if (isCanceled)
+            await channel.SendMessageAsync(
+                $"The poll is cancelled because action from poll creator.\nPlease ask <@!{data!.UserID}> for more information.",
+                messageReference: new MessageReference(message.Id, channel.Id, guild.Id));
+        else
+            await channel.SendMessageAsync(
+                $"The poll is completely collected about {pollSize} vote, check the result by clicking message reference above this text.\nPlease ask <@!{data!.UserID}> for more information.",
+                messageReference: new MessageReference(message.Id, channel.Id, guild.Id));
+    
+        Global.State.Poll.PollActive.Remove(data.ID);
+        data.IsExpired = true;
+        db.PollRunning.Update(data);
+        await db.SaveChangesAsync();
     }
 }

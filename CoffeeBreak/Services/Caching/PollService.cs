@@ -1,3 +1,4 @@
+using CoffeeBreak.Function;
 using CoffeeBreak.Models;
 using CoffeeBreak.ThirdParty;
 using Discord.WebSocket;
@@ -60,13 +61,46 @@ public class PollService
             // Insert to cache
             if (Global.State.Poll.PollActive.Where(x => x.Key == data.ID).Count() > 0) continue;
 
-            Logging.Info($"Add ID:{data.ID} to State.Giveaway.GiveawayActive from database caching.", "GAPool");
+            Logging.Info($"Add ID:{data.ID} to State.Poll.PollActive from database caching.", "PollPool");
             Global.State.Poll.PollActive.Add(data.ID, data.ExpiredDate);
         }
     }
 
     private async Task CheckPollAsync()
     {
-        //
+        foreach (var poll in Global.State.Poll.PollActive.ToList())
+        {
+            // Get data
+            var data = await _db.PollRunning.Where(x => x.ID == poll.Key).FirstOrDefaultAsync();
+
+            // Get guild, channel, and message
+            var guild = _client.GetGuild(data!.GuildID);
+            // TODO: If guild is null, delete all data based on channel
+            if (guild == null) continue;
+            var channel = guild.GetChannel(data!.ChannelID) as SocketTextChannel;
+            if (channel == null) continue;
+
+            // Check diff before get message because we afraid discord
+            // connection will slow
+            var msVal = ((DateTimeOffset)poll.Value).ToUnixTimeSeconds();
+            if (msVal - DateTimeOffset.Now.ToUnixTimeSeconds() > 0) continue;
+
+            // Get message, if null remove to cache because is unecessary
+            var message = await channel.GetMessageAsync(data.MessageID);
+            if (message == null)
+            {
+                Logging.Warning($"Invalid poll from ID:{poll.Key}. Removing from database.", "PollPool");
+                Global.State.Giveaway.GiveawayActive.Remove(poll.Key);
+
+                data.IsExpired = true;
+                _db.PollRunning.Update(data);
+                await _db.SaveChangesAsync();
+                continue;
+            }
+
+            // If safe from anything, execute stop poll
+            Logging.Info($"Stop poll for ID:{poll.Key}.", "PollPool");
+            await PollManager.StopPollAsync(guild, channel, message, _db, poll.Key);
+        }
     }
 }
