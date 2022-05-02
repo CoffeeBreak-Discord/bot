@@ -7,6 +7,7 @@ using CoffeeBreak.Function;
 namespace CoffeeBreak.Modules;
 public partial class ModerationModule
 {
+    [RequireUserPermission(GuildPermission.ModerateMembers)]
     [SlashCommand("warn", "Set warn from specified user")]
     public async Task WarnCommandAsync(
         [Summary(description: "Target user")] IUser user,
@@ -48,6 +49,7 @@ public partial class ModerationModule
             Reason = reason
         });
         await _db.SaveChangesAsync();
+        await guildUser.SendMessageAsync($"You has been warned by {this.Context.User} with reason:\n```{reason ?? "No reason"}```");
         await this.RespondAsync($"{guildUser.Mention} was successfully warned with reason:\n```{reason ?? "No reason"}```");
     }
 

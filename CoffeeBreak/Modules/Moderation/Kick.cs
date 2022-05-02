@@ -40,6 +40,7 @@ public partial class ModerationModule
             return;
         }
 
+        await guildUser.SendMessageAsync($"You has been kicked by {this.Context.User} with reason:\n```{reason ?? "No reason"}```");
         await guildUser.KickAsync(reason);
         await this.RespondAsync($"Successfully kicked {guildUser} with reason:\n```{reason ?? "No reason"}```");
     }

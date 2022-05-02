@@ -39,6 +39,7 @@ public partial class ModerationModule
             return;
         }
 
+        await guildUser.SendMessageAsync($"You has been banned by {this.Context.User} with reason:\n```{reason ?? "No reason"}```");
         await guildUser.BanAsync(reason: reason);
         await this.RespondAsync($"Successfully banned {guildUser} with reason:\n```{reason ?? "No reason"}```");
     }
