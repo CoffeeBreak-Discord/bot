@@ -20,11 +20,6 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0
 # Set WORKDIR
 WORKDIR /app
 
-ARG VERSION=nightly
-ARG COMMIT=Unknown
-ENV VERSION=${VERSION} \
-    COMMIT=${COMMIT}
-
 # Install dependencies & extra utility packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -38,12 +33,18 @@ RUN apt-get update \
     && apt-get autoclean -y \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the built app from build stage
-COPY --from=build-stage /build .
-
 # Link native dependencies
 RUN ln -sf $(ldconfig -p | grep libopus | tr ' ' '\n' | grep /) /app/libopus.so \
     && ln -sf $(ldconfig -p | grep libsodium | tr ' ' '\n' | grep /) /app/libsodium.so
+
+# Copy the built app from build stage
+COPY --from=build-stage /build .
+
+# Versioning thingy
+ARG VERSION=nightly
+ARG COMMIT=Unknown
+ENV VERSION=${VERSION} \
+    COMMIT=${COMMIT}
 
 # Now we can run the app with DOCKER CMD
 ENTRYPOINT ["/app/run"]
