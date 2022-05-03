@@ -62,6 +62,9 @@ jobs:
           tags: |
             ${{ steps.tags.outputs.name }}
             latest
+          labels: |
+            org.opencontainers.image.title=${{ matrix.project }}
+            org.opencontainers.image.vendor=CoffeeBreak-Discord
 
       - name: Extract version for build arg
         id: version
