@@ -43,9 +43,5 @@ public class InviteToGuildService
         {
             Logging.Info($"Missing permission for sending welcome message to {guild.Id}, skipping.", "InviteGuild");
         }
-
-        // Register command to server
-        await _commands.RegisterCommandsToGuildAsync(guild.Id);
-        Logging.Info($"Inject command to {guild.Id}.", "InviteGuild");
     }
 }
