@@ -8,7 +8,7 @@ public class Global
     {
         public static string ProcessName = System.Diagnostics.Process.GetCurrentProcess().ProcessName ?? "CoffeeBreak";
         public static string PrettyName = "Coffee Break";
-        public static string LinkInvite = "https://discord.com/api/oauth2/authorize?client_id=937695915999920169&permissions=8876220470&scope=applications.commands%20bot";
+        public static string LinkInvite = "https://discord.com/api/oauth2/authorize?client_id=937695915999920169&permissions=1247989459062&scope=applications.commands%20bot";
         public static string DiscordServer = "https://discord.gg/fpVX4RzhBd";
     }
 
