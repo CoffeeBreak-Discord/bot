@@ -1,15 +1,18 @@
 using CoffeeBreak.ThirdParty;
 using Discord;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace CoffeeBreak.Services;
 public class InviteToGuildService
 {
     private DiscordShardedClient _client;
+    private InteractionService _commands;
 
-    public InviteToGuildService(DiscordShardedClient client)
+    public InviteToGuildService(DiscordShardedClient client, InteractionService commands)
     {
         _client = client;
+        _commands = commands;
         client.JoinedGuild += this.JoinedGuild;
     }
 
@@ -40,5 +43,9 @@ public class InviteToGuildService
         {
             Logging.Info($"Missing permission for sending welcome message to {guild.Id}, skipping.", "InviteGuild");
         }
+
+        // Register command to server
+        await _commands.RegisterCommandsToGuildAsync(guild.Id);
+        Logging.Info($"Inject command to {guild.Id}.", "InviteGuild");
     }
 }
