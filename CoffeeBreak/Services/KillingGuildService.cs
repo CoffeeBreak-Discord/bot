@@ -44,6 +44,22 @@ public class KillingGuildService
             _db.StageConfig.RemoveRange(dataStage);
         }
 
+        // Part 3: Poll
+        // Force end the poll
+        var dataPoll = await _db.PollRunning.Where(x => x.GuildID == guild.Id && !x.IsExpired).ToArrayAsync();
+        if (dataPoll.Count() > 0)
+        {
+            for (int i = 0; i < dataPoll.Count(); i++)
+            {
+                // Delete from cache
+                Global.State.Poll.PollActive.Remove(dataPoll[i].ID);
+
+                // Disable poll
+                dataPoll[i].IsExpired = true;
+            }
+            _db.PollRunning.UpdateRange(dataPoll);
+        }
+
         // Finalize the changes
         await _db.SaveChangesAsync();
     }
