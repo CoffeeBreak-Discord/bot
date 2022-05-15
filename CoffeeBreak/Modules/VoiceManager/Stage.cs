@@ -88,8 +88,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     }
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
-    [RequireBotPermission(GuildPermission.MoveMembers)]
-    [RequireBotPermission(GuildPermission.MuteMembers)]
     [RequireBotPermission(GuildPermission.ManageEvents)]
     [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
@@ -108,7 +106,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageRoles)]
     [SlashCommand("role", "Set speaker role in stage.")]
     public async Task RoleCommandAsync(
@@ -140,7 +137,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageRoles)]
     [SlashCommand("speaker", "Insert/Delete speaker role to the speaker user.")]
     public async Task SpeakerCommandAsync([Summary(description: "User target")] IUser user)
