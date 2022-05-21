@@ -92,16 +92,24 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
     {
-        var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as IStageChannel;
-        if (channel == null)
+        try
         {
-            await this.RespondAsync("This bot didn't joined any stage.", ephemeral: true);
-            return;
-        }
+            var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as SocketStageChannel;
+            if (channel == null)
+            {
+                await this.RespondAsync("This bot didn't joined any stage.", ephemeral: true);
+                return;
+            }
 
-        if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
-        await channel.DisconnectAsync();
-        await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
+            if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
+            await channel.DisconnectAsync();
+            if (channel.IsLive) await channel.StopStageAsync();
+            await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
+        }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
+        }
     }
 
     [RequireUserPermission(GuildPermission.ManageEvents)]

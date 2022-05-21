@@ -15,7 +15,22 @@ public class VoiceStageService
         _cache = cache;
 
         client.UserVoiceStateUpdated += this.UserVoiceStateUpdated;
+        client.UserVoiceStateUpdated += this.WhenAllUserIsLeaved;
         Logging.Info($"Voice Stage caching loaded!", "VoiceStage");
+    }
+
+    private async Task WhenAllUserIsLeaved(SocketUser user, SocketVoiceState stateBefore, SocketVoiceState stateAfter)
+    {
+        // If the stage is empty, leave the stage
+        // TODO: Add ability to close stage if the bug is fixed
+        var guildUser = user as SocketGuildUser;
+        if (guildUser == null) return;
+
+        var state = guildUser.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as SocketStageChannel;
+        if (state == null) return;
+
+        if (state.Users.Count == 0 || state.Users.Count > 1) return;
+        await state.DisconnectAsync();
     }
 
     private async Task UserVoiceStateUpdated(SocketUser user, SocketVoiceState stateBefore, SocketVoiceState stateAfter)
@@ -33,6 +48,8 @@ public class VoiceStageService
         // Get voice state before and after
         var stageBefore = stateBefore.VoiceChannel as SocketStageChannel;
         var stageAfter = voiceState;
+
+        if (stageAfter.Speakers.Count == 1 && stageAfter.Users.Count == 1) await voiceState.DisconnectAsync();
 
         // Don't spam if the speaker declined the request or down to the audience
         if (stageBefore != null && !stageBefore.IsSpeaker && !stageAfter.IsSpeaker) return;
