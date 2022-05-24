@@ -41,7 +41,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
     [RequireBotPermission(GuildPermission.MuteMembers)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageChannels)]
     [SlashCommand("join", "Make the bot watching the stage.", runMode: RunMode.Async)]
     public async Task JoinCommandAsync(
@@ -88,28 +87,22 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     }
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
+    [RequireBotPermission(GuildPermission.MoveMembers)]
+    [RequireBotPermission(GuildPermission.MuteMembers)]
     [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
     {
-        try
+        var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as SocketStageChannel;
+        if (channel == null)
         {
-            var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as SocketStageChannel;
-            if (channel == null)
-            {
-                await this.RespondAsync("This bot didn't joined any stage.", ephemeral: true);
-                return;
-            }
+            await this.RespondAsync("This bot didn't joined any stage.", ephemeral: true);
+            return;
+        }
 
-            if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
-            await channel.DisconnectAsync();
-            if (channel.IsLive) await channel.StopStageAsync();
-            await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
-        }
-        catch (System.Exception ex)
-        {
-            Console.WriteLine($"{ex.Message}\n{ex.StackTrace}");
-        }
+        if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
+        if (channel.IsLive) await channel.StopStageAsync();
+        else await channel.DisconnectAsync();
+        await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
     }
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
