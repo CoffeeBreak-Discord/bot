@@ -41,7 +41,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
     [RequireBotPermission(GuildPermission.MuteMembers)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageChannels)]
     [SlashCommand("join", "Make the bot watching the stage.", runMode: RunMode.Async)]
     public async Task JoinCommandAsync(
@@ -90,11 +89,10 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.MoveMembers)]
     [RequireBotPermission(GuildPermission.MuteMembers)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [SlashCommand("leave", "Make the bot leave the stage.", runMode: RunMode.Async)]
     public async Task LeaveCommandAsync()
     {
-        var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as IStageChannel;
+        var channel = this.Context.Guild.GetUser(_client.CurrentUser.Id).VoiceChannel as SocketStageChannel;
         if (channel == null)
         {
             await this.RespondAsync("This bot didn't joined any stage.", ephemeral: true);
@@ -102,13 +100,13 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
         }
 
         if (await _cache.GetDatabase().KeyExistsAsync(_cacheKeys)) await _cache.GetDatabase().KeyDeleteAsync(_cacheKeys);
-        await channel.DisconnectAsync();
+        if (channel.IsLive) await channel.StopStageAsync();
+        else await channel.DisconnectAsync();
         await this.RespondAsync($"Bot successfully disconnected from <#{channel.Id}> stage.", ephemeral: true);
     }
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageRoles)]
     [SlashCommand("role", "Set speaker role in stage.")]
     public async Task RoleCommandAsync(
@@ -140,7 +138,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    [RequireBotPermission(GuildPermission.ManageEvents)]
     [RequireBotPermission(GuildPermission.ManageRoles)]
     [SlashCommand("speaker", "Insert/Delete speaker role to the speaker user.")]
     public async Task SpeakerCommandAsync([Summary(description: "User target")] IUser user)

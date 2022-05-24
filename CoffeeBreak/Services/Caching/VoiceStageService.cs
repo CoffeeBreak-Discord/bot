@@ -34,6 +34,8 @@ public class VoiceStageService
         var stageBefore = stateBefore.VoiceChannel as SocketStageChannel;
         var stageAfter = voiceState;
 
+        if (stageAfter.Speakers.Count == 1 && stageAfter.Users.Count == 1) await voiceState.DisconnectAsync();
+
         // Don't spam if the speaker declined the request or down to the audience
         if (stageBefore != null && !stageBefore.IsSpeaker && !stageAfter.IsSpeaker) return;
 
