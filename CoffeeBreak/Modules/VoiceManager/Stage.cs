@@ -107,7 +107,6 @@ public partial class VoiceManagerStageModule : InteractionModuleBase<ShardedInte
 
     [RequireUserPermission(GuildPermission.ManageEvents)]
     [RequireUserPermission(GuildPermission.ManageRoles)]
-    [RequireBotPermission(GuildPermission.ManageRoles)]
     [SlashCommand("role", "Set speaker role in stage.")]
     public async Task RoleCommandAsync(
         [Summary(description: "Speaker's role name")] IRole role)
